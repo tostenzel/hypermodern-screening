@@ -1,9 +1,19 @@
 [flake8]
 select = ANN,B,B9,BLK,C,D,DAR,E,F,I,S,W
-ignore = E203,E501,W503
-max-line-length = 80
-max-complexity = 10
-application-import-names = hypermodern_screening,tests
+
+# Information to order imports.
+application-import-names = hypermodern_screening, tests
 import-order-style = google
-docstring-convention = google
+
+ignore = E203, E501, W503
+
+# Bugbear allows 10% more characters.
+max-line-length = 80
+exclude = tests/resources/nataf_transformation.py, tests/resources/distributions.py
+
+# Adress some assert issue of bandit.
 per-file-ignores = tests/*:S101
+
+max-complexity = 10
+
+docstring-convention = numpy
