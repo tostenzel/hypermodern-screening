@@ -11,7 +11,7 @@ from scipy import stats
 Nataf Transformation of random variables
 ---------------------------------------------------------------------------
 Developed by:
-Sebastian Geyer (s.geyer@tum.de), 
+Sebastian Geyer (s.geyer@tum.de),
 Felipe Uribe
 Iason Papaioannou
 Daniel Straub

@@ -273,17 +273,17 @@ def test_linear_model_equality_radial_trajectory():
     Tests whether `screening_measures` yields the same results for samples in radial
     and in trajectory design. This yields confidence in the radial option, as the
     trajectory option is already tested multiple times.
-    
+
     Notes
     -----
     As the model is linear, both uncorrelated EEs should be equals to the coefficients
     and both correlated EEs should be equals to the sum of coefficients times the
     correlation betwen parameters.
-    
+
     """
     mu = np.array([0, 0, 0])
 
-    cov = np.array([[1.0, 0.9, 0.4], [0.9, 1.0, 0.0], [0.4, 0.0, 1.0],])
+    cov = np.array([[1.0, 0.9, 0.4], [0.9, 1.0, 0.0], [0.4, 0.0, 1.0]])
     numeric_zero = 0.01
     seed = 2020
     n_levels = 10

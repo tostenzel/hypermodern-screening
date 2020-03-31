@@ -11,7 +11,7 @@ from scipy import stats
 Generation of distribution objects
 ---------------------------------------------------------------------------
 Developed by:
-Sebastian Geyer (s.geyer@tum.de), 
+Sebastian Geyer (s.geyer@tum.de),
 Felipe Uribe
 Iason Papaioannou
 Daniel Straub
@@ -65,8 +65,8 @@ class distributions(object):  # pragma: no cover
       Pareto:                     Obj = distributions('pareto','PAR',[x_m,alpha])
       Rayleigh:                   Obj = distributions('rayleigh','PAR',[alpha])
       Chi-squared:                Obj = distributions('chisquare','PAR',[k])
-      
-      
+
+
       opt = "MOM", if you want to specify the distibution by its moments:
       Binomial:                   Obj = distributions('binomial','MOM',[mean,std])
       Geometric:                  Obj = distributions('geometric','MOM',[mean])

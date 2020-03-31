@@ -13,11 +13,11 @@ locations = "src", "tests", "noxfile.py"
 
 def install(name):
     """Install python package via pip"""
-    subprocess.call(['pip', 'install', name])
+    subprocess.call(["pip", "install", name])
 
 
 # Install `poetry`. Appareantly required by my system in contrary to guide.
-install('poetry')
+install("poetry")
 
 
 def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> None:
@@ -92,9 +92,5 @@ def tests(session: Session) -> None:
     """Run the test suite."""
     args = session.posargs or ["--cov"]
     session.run("poetry", "install", "--no-dev", external=True)
-    install_with_constraints(
-        session, "coverage[toml]", "pytest", "pytest-cov"
-    )
+    install_with_constraints(session, "coverage[toml]", "pytest", "pytest-cov")
     session.run("pytest", *args)
-
-
