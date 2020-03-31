@@ -1,0 +1,3 @@
+[console_scripts]
+hypermodern-screening = hypermodern_screening.foo:main
+
