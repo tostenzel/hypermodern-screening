@@ -1,4 +1,7 @@
+
+#Pycache folders and files
 __pycache__/
+
 
 # Distribution / packaging
 *.egg-info/

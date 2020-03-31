@@ -39,4 +39,4 @@ def main():
     sd_ee_uncorr = measures_list[4]
     sd_ee_corr = measures_list[5]
 
-    print(ee_uncorr)
+    print(ee_uncorr, "test")
