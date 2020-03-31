@@ -24,7 +24,9 @@ from hypermodern_screening.select_sample_set import combi_wrapper
 from hypermodern_screening.select_sample_set import select_trajectories
 from hypermodern_screening.select_sample_set import campolongo_2007
 from hypermodern_screening.select_sample_set import intermediate_ge_menendez_2014
-from hypermodern_screening.select_sample_set import select_trajectories_wrapper_iteration
+from hypermodern_screening.select_sample_set import (
+    select_trajectories_wrapper_iteration,
+)
 from hypermodern_screening.select_sample_set import total_distance
 from hypermodern_screening.select_sample_set import final_ge_menendez_2014
 
@@ -191,9 +193,7 @@ def sample_traj_list(numbers):
 @pytest.fixture
 def traj_selection(sample_traj_list, numbers):
     """Fix sample set and distance matrix for the next four tests."""
-    select_list, select_distance_matrix = campolongo_2007(
-        sample_traj_list, numbers[3]
-    )
+    select_list, select_distance_matrix = campolongo_2007(sample_traj_list, numbers[3])
 
     return [select_list, select_distance_matrix]
 

@@ -126,7 +126,8 @@ def screening_measures(function, traj_list, step_list, cov, mu, radial=False):
         for traj in range(0, n_trajs):
             for row in range(0, n_rows):
                 fct_evals_pp_one_row_zero[row, traj] = function(
-                    *pp_one_row_zero[traj][row, :])
+                    *pp_one_row_zero[traj][row, :]
+                )
 
         for traj in range(0, n_trajs):
             ee_corr_i[:, traj] = (

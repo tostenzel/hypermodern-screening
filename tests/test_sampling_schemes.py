@@ -6,7 +6,6 @@ from hypermodern_screening.sampling_schemes import morris_trajectory
 from hypermodern_screening.sampling_schemes import radial_sample
 
 
-
 def test_morris_trajectory_value_grid():
     """
     Tests wether the point grid is composed of the rights values.
@@ -43,9 +42,12 @@ def test_radial_sample():
     """
     n_rads = 10
     n_params = 5
-    
+
     rad_list, _ = radial_sample(n_rads, n_params)
-    
+
     for rad in range(0, n_rads - 1):
         for row in range(0, n_params):
-            assert_array_equal(np.delete(rad_list[rad][row + 1, :], row), np.delete(rad_list[rad][0, :], row))
+            assert_array_equal(
+                np.delete(rad_list[rad][row + 1, :], row),
+                np.delete(rad_list[rad][0, :], row),
+            )

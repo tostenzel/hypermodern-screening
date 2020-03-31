@@ -145,13 +145,9 @@ def trans_ee_uncorr(sample_list, cov, mu, radial=False):
     trans_piplusone_i = []
     for samp in range(0, n_sub_sample):
         trans_pi_i.append(
-            reverse_ee_uncorr_reorder_sample(
-                zero_idx_diff[samp], row_plus_one=False
-            )
+            reverse_ee_uncorr_reorder_sample(zero_idx_diff[samp], row_plus_one=False)
         )
-        trans_piplusone_i.append(
-            reverse_ee_uncorr_reorder_sample(one_idx_diff[samp])
-        )
+        trans_piplusone_i.append(reverse_ee_uncorr_reorder_sample(one_idx_diff[samp]))
 
     return trans_piplusone_i, trans_pi_i, coeff_step
 
@@ -251,10 +247,7 @@ def trans_ee_corr(sample_list, cov, mu, radial=False):
             mu_one = mu
             cov_one = cov
             for row in range(0, n_rows):
-                (
-                    one_idx_diff[samp][row, :],
-                    _
-                ) = transform_stnormal_normal_corr(
+                (one_idx_diff[samp][row, :], _) = transform_stnormal_normal_corr(
                     one_idx_diff[samp][row, :], cov_one, mu_one
                 )
                 mu_one = reorder_mu(mu_one)
@@ -264,7 +257,7 @@ def trans_ee_corr(sample_list, cov, mu, radial=False):
         trans_piplusone_i = []
         for samp in range(0, n_sub_sample):
             trans_piplusone_i.append(
-            reverse_ee_uncorr_reorder_sample(one_idx_diff[samp])
+                reverse_ee_uncorr_reorder_sample(one_idx_diff[samp])
             )
 
         return trans_piplusone_iminusone, trans_piplusone_i

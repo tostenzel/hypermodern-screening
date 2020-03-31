@@ -2,7 +2,9 @@ import numpy as np
 from numpy.testing import assert_allclose
 
 from hypermodern_screening.transform_distributions import covariance_to_correlation
-from hypermodern_screening.transform_distributions import transform_uniform_stnormal_uncorr
+from hypermodern_screening.transform_distributions import (
+    transform_uniform_stnormal_uncorr,
+)
 from hypermodern_screening.transform_distributions import transform_stnormal_normal_corr
 
 from tests.resources.nataf_transformation import nataf_transformation

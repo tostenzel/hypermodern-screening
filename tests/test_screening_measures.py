@@ -231,7 +231,8 @@ def test_screening_measures_trajectory_uncorrelated_linear_function():
     n_traj_sample = 10_000
 
     traj_list, step_list = trajectory_sample(
-        n_traj_sample, n_inputs, n_levels, seed, True, numeric_zero)
+        n_traj_sample, n_inputs, n_levels, seed, True, numeric_zero
+    )
 
     (
         ee_uncorr,
@@ -267,7 +268,6 @@ def linear_function(a, b, c, *args):
     return a + b + c
 
 
-
 def test_linear_model_equality_radial_trajectory():
     """
     Tests whether `screening_measures` yields the same results for samples in radial
@@ -282,14 +282,8 @@ def test_linear_model_equality_radial_trajectory():
     
     """
     mu = np.array([0, 0, 0])
-    
-    cov = np.array(
-        [
-            [1.0, 0.9, 0.4],
-            [0.9, 1.0, 0.0],
-            [0.4, 0.0, 1.0],
-        ]
-    )
+
+    cov = np.array([[1.0, 0.9, 0.4], [0.9, 1.0, 0.0], [0.4, 0.0, 1.0],])
     numeric_zero = 0.01
     seed = 2020
     n_levels = 10
@@ -297,15 +291,49 @@ def test_linear_model_equality_radial_trajectory():
     n_sample = 100
 
     # Generate trajectories and steps. Then computes measures.
-    traj_list, traj_step_list = trajectory_sample(n_sample, n_inputs, n_levels, seed, False, numeric_zero)
-    t_ee_ind, t_ee_full, t_abs_ee_ind, t_abs_ee_full, t_sd_ee_ind, t_sd_ee_full = screening_measures(linear_function, traj_list, traj_step_list, cov, mu, radial=False)
-    
+    traj_list, traj_step_list = trajectory_sample(
+        n_sample, n_inputs, n_levels, seed, False, numeric_zero
+    )
+    (
+        t_ee_ind,
+        t_ee_full,
+        t_abs_ee_ind,
+        t_abs_ee_full,
+        t_sd_ee_ind,
+        t_sd_ee_full,
+    ) = screening_measures(
+        linear_function, traj_list, traj_step_list, cov, mu, radial=False
+    )
+
     # Generate radial samples and steps. Then computes measures.
     rad_list, rad_step_list = radial_sample(n_sample, n_inputs, True, numeric_zero)
-    r_ee_ind, r_ee_full, r_abs_ee_ind, r_abs_ee_full, r_sd_ee_ind, r_sd_ee_full = screening_measures(linear_function, rad_list, rad_step_list, cov, mu, radial = True)
+    (
+        r_ee_ind,
+        r_ee_full,
+        r_abs_ee_ind,
+        r_abs_ee_full,
+        r_sd_ee_ind,
+        r_sd_ee_full,
+    ) = screening_measures(
+        linear_function, rad_list, rad_step_list, cov, mu, radial=True
+    )
 
     # Compress results to lists
-    traj_results = [t_ee_ind, t_ee_full, t_abs_ee_ind, t_abs_ee_full, t_sd_ee_ind, t_sd_ee_full]
-    rad_results = [r_ee_ind, r_ee_full, r_abs_ee_ind, r_abs_ee_full, r_sd_ee_ind, r_sd_ee_full]
-    
+    traj_results = [
+        t_ee_ind,
+        t_ee_full,
+        t_abs_ee_ind,
+        t_abs_ee_full,
+        t_sd_ee_ind,
+        t_sd_ee_full,
+    ]
+    rad_results = [
+        r_ee_ind,
+        r_ee_full,
+        r_abs_ee_ind,
+        r_abs_ee_full,
+        r_sd_ee_ind,
+        r_sd_ee_full,
+    ]
+
     assert_allclose(traj_results, rad_results, atol=1.0e-13)

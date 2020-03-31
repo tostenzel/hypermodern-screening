@@ -2,7 +2,9 @@ import random
 
 import chaospy as cp
 import numpy as np
-from hypermodern_screening.transform_distributions import transform_uniform_stnormal_uncorr
+from hypermodern_screening.transform_distributions import (
+    transform_uniform_stnormal_uncorr,
+)
 
 
 def stepsize(n_levels):
@@ -182,7 +184,7 @@ def trajectory_sample(
     normal=False,
     numeric_zero=0.01,
     step_function=stepsize,
-    stairs=True
+    stairs=True,
 ):
     """
     Loops over `morris_sample`.
@@ -220,14 +222,8 @@ def trajectory_sample(
         seed = 123 + traj
 
         m_traj, steps = morris_trajectory(
-            n_inputs,
-            n_levels,
-            seed,
-            normal,
-            numeric_zero,
-            step_function,
-            stairs,
-            )
+            n_inputs, n_levels, seed, normal, numeric_zero, step_function, stairs,
+        )
 
         sample_traj_list.append(m_traj)
         steps_list.append(steps)
@@ -235,7 +231,7 @@ def trajectory_sample(
     return sample_traj_list, steps_list
 
 
-def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence='S'):
+def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence="S"):
     """
     Generates sample in radial design as described in [1].
     
@@ -289,8 +285,8 @@ def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence='S'
 
     # Draw all elements at once.
     all_elements = cp.generate_samples(order=n_rad * 2 * n_inputs, rule=sequence)
-    all_elements =  all_elements.reshape(n_rad, 2 * n_inputs)
-    
+    all_elements = all_elements.reshape(n_rad, 2 * n_inputs)
+
     rad_list = []
     steps_list = []
 
@@ -301,8 +297,8 @@ def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence='S'
 
         # Fill diagonal.
         diag_temp = all_elements[row, n_inputs:]
-        rad_temp[1:,:].flat[::n_inputs + 1] =  diag_temp
-        
+        rad_temp[1:, :].flat[:: n_inputs + 1] = diag_temp
+
         # For standard normally distributed draws.
         if normal is True:
             rad_temp = np.apply_along_axis(
@@ -310,12 +306,12 @@ def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence='S'
             )
         else:
             pass
-    
+
         rad_list.append(rad_temp)
-        
+
         # Subtract diagonal elements from first row.
         steps_temp = np.array([1, n_inputs])
-        steps_temp = rad_temp[1:,:].flat[::n_inputs + 1] - rad_temp[0, :]
+        steps_temp = rad_temp[1:, :].flat[:: n_inputs + 1] - rad_temp[0, :]
         steps_list.append(steps_temp)
-    
+
     return rad_list, steps_list

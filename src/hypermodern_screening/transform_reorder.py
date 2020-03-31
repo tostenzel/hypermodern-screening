@@ -79,7 +79,9 @@ def reverse_ee_uncorr_reorder_sample(sample_reordered, row_plus_one=True):
         Trjectory in original order.
 
     """
-    sample = np.ones([np.size(sample_reordered, 0), np.size(sample_reordered, 1)]) * np.nan
+    sample = (
+        np.ones([np.size(sample_reordered, 0), np.size(sample_reordered, 1)]) * np.nan
+    )
 
     for i in range(0, np.size(sample_reordered, 0)):
 
@@ -144,7 +146,9 @@ def reverse_ee_corr_reorder_sample(sample_reordered):
         Trjectory in original order.
 
     """
-    sample = np.ones([np.size(sample_reordered, 0), np.size(sample_reordered, 1)]) * np.nan
+    sample = (
+        np.ones([np.size(sample_reordered, 0), np.size(sample_reordered, 1)]) * np.nan
+    )
 
     for i in range(0, np.size(sample, 0)):
         sample[i, :] = np.roll(
