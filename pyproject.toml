@@ -12,6 +12,7 @@ keywords = ["hypermodern", "screening"]
 [tool.poetry.dependencies]
 python = "^3.7"
 chaospy = "^3.2.7"
+typeguard = "^2.7.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.4.1"

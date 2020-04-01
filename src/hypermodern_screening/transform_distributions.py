@@ -28,7 +28,7 @@ def covariance_to_correlation(cov: np.ndarray) -> np.ndarray:
 
 
 def transform_uniform_stnormal_uncorr(
-    uniform_deviates: np.ndarray, numeric_zero: int=0.005
+    uniform_deviates: np.ndarray, numeric_zero: float=0.005
     ) -> np.ndarray:
     """
     Converts sample from uniform distribution to standard normal space
