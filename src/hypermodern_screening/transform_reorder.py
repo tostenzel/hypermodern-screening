@@ -1,6 +1,5 @@
 """
 Functions for reordering the sample rows following [1].
-
 The intuition behind the reordering in general is the following: To compute the
 uncorrelated Elementary Effects, one moves the sampled elements that have been changed
 by `step` to the back of the row. For the correlated EE, one leaves the newly changed
@@ -17,13 +16,11 @@ for the radial design.
 Other functions order the expectations and covariance matrix accordingly. They are also
 used to initialize the correlating loops in the two functions in `transform_ee.py` in the
 right order.
-
 References
 ----------
 [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
 sensitivityanalysis of models with dependent inputs. Reliability Engineering &
 System Safety 100 (162), 28–39.
-
 """
 import numpy as np
 
@@ -31,19 +28,16 @@ import numpy as np
 def ee_uncorr_reorder_sample(sample, row_plus_one=True):
     """
     For each row i (non-pythonic), move the first i elements to the back.
-
     Parameters
     ----------
     sample : ndarray
         sample.
     row_plus_one : bool
         Add 1 to row index, i.e. start with second row.
-
     Returns
     -------
     sample_reordered : ndarray
         Reordered sample.
-
     """
     sample_reordered = np.ones([np.size(sample, 0), np.size(sample, 1)]) * np.nan
 
@@ -67,17 +61,14 @@ def ee_uncorr_reorder_sample(sample, row_plus_one=True):
 def reverse_ee_uncorr_reorder_sample(sample_reordered, row_plus_one=True):
     """
     Reverse of function `uncorr_reorder_sample`.
-
     Parameters
     ----------
     sample_reordered : ndarray
         Reordered sample.
-
     Returns
     -------
     sample : ndarray
         Trjectory in original order.
-
     """
     sample = (
         np.ones([np.size(sample_reordered, 0), np.size(sample_reordered, 1)]) * np.nan
@@ -101,24 +92,20 @@ def reverse_ee_uncorr_reorder_sample(sample_reordered, row_plus_one=True):
 def ee_corr_reorder_sample(sample):
     """
     For each row i (non-pythonic), move the first i-1 elements to the back.
-
     Parameters
     ----------
     sample : ndarray
         sample.
     row_plus_one : bool
         Add 1 to row index, i.e. start with second row.
-
     Returns
     -------
     sample_reordered : ndarray
         Reordered sample.
-
     Notes
     -----
     There is no `row_plus_one=False` option because this is equivalent
     with `uncorr_reorder_sample(sample, row_plus_one=True)`.
-
     """
     sample_reordered = np.ones([np.size(sample, 0), np.size(sample, 1)]) * np.nan
 
@@ -134,17 +121,14 @@ def ee_corr_reorder_sample(sample):
 def reverse_ee_corr_reorder_sample(sample_reordered):
     """
     Reverse of function `corr_reorder_sample`.
-
     Parameters
     ----------
     sample_reordered : ndarray
         Reordered sample.
-
     Returns
     -------
     sample : ndarray
         Trjectory in original order.
-
     """
     sample = (
         np.ones([np.size(sample_reordered, 0), np.size(sample_reordered, 1)]) * np.nan
@@ -161,17 +145,14 @@ def reverse_ee_corr_reorder_sample(sample_reordered):
 def reorder_mu(mu):
     """
     Move the first element of the expectation vector to the end.
-
     Parameters
     ----------
     mu : ndarray
         Expectation values of row.
-
     Returns
     -------
     mu_reordered : ndarray
         Reordered expectation values of row.
-
     """
     mu_reordered = np.roll(mu, -1)
 
@@ -182,17 +163,14 @@ def reorder_cov(cov):
     """
     Arrange covariance matrix according to the expectation vector when
     the first element is moved to the end.
-
     Parameters
     ----------
     cov : ndarray
         Covariance matrix of row.
-
     Returns
     -------
     cov_reordered : ndarray
         Reordered covariance matrix of row.
-
     """
     cov_reordered = np.ones(cov.shape) * np.nan
 
@@ -212,17 +190,14 @@ def reorder_cov(cov):
 def reverse_reorder_mu(mu_reordered):
     """
     Reverse of function `reorder_mu`.
-
     Parameters
     ----------
     mu_reordered : ndarray
         Reordered expectation values of row.
-
     Returns
     -------
     mu : ndarray
         Expectation values of row in original order.
-
     """
     mu = np.roll(mu_reordered, +1)
 
@@ -232,17 +207,14 @@ def reverse_reorder_mu(mu_reordered):
 def reverse_reorder_cov(cov_reordered):
     """
     Reverse of function `reorder_cov`.
-
     Parameters
     ----------
     cov_reordered : ndarray
         Reordered covariance matrix.
-
     Returns
     -------
     cov : ndarray
         Covarince matrix in original order.
-
     """
     cov = np.ones(cov_reordered.shape) * np.nan
 
@@ -259,3 +231,4 @@ def reverse_reorder_cov(cov_reordered):
     ]
 
     return cov
+

@@ -2,13 +2,11 @@
 Computes the screening measures for correlated inputs that I improved upon
 [1] by adjusting the step in the denumeroter to the transformed step in the
 nominator in order to not violate the definition of the function derivative.
-
 References
 ----------
 [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
 sensitivityanalysis of models with dependent inputs. Reliability Engineering &
 System Safety 100 (162), 28–39.
-
 """
 import numpy as np
 from hypermodern_screening.transform_ee import trans_ee_corr
@@ -18,7 +16,6 @@ from hypermodern_screening.transform_ee import trans_ee_uncorr
 def screening_measures(function, traj_list, step_list, cov, mu, radial=False):
     """
     Computes screening measures for a set of paramters.
-
     Parameters
     ----------
     function : function
@@ -33,42 +30,48 @@ def screening_measures(function, traj_list, step_list, cov, mu, radial=False):
         Expectation values of the input parameters.
     radial : bool
         Sample is in trajectory or radial design.
-
     Returns
     -------
-    ee_uncorr : ndarray
-        Mean uncorrelated Elementary Effect for each parameter.
-    ee_corr : ndarray
-        Mean correlated Elementary Effect for each parameter.
-    abs_ee_uncorr : ndarray
-        Mean absolute uncorrelated Elementary Effect for each parameter.
-    abs_ee_corr : ndarray
-        Mean absolute correlated Elementary Effect for each parameter.
-    sd_ee_uncorr : ndarray
-        SD of individual uncorrelated Elementary Effects for each parameter.
-    sd_ee_corr : ndarray
-        SD of individual correlated Elementary Effects for each parameter.
-
+    measures_list: list
+       contains:
+            ee_uncorr : ndarray
+                Mean uncorrelated Elementary Effect for each parameter.
+            ee_corr : ndarray
+                Mean correlated Elementary Effect for each parameter.
+            abs_ee_uncorr : ndarray
+                Mean absolute uncorrelated Elementary Effect for each parameter.
+            abs_ee_corr : ndarray
+                Mean absolute correlated Elementary Effect for each parameter.
+            sd_ee_uncorr : ndarray
+                SD of uncorrelated Elementary Effects for each parameter.
+            sd_ee_corr : ndarray
+                SD of correlated Elementary Effects for each parameter.
+    obs_list: list
+        contains
+            ee_uncorr_i : ndarray
+                Observations of uncorrelated Elementary Effects.
+            ee_corr_i : ndarray
+                Observations of correlated Elementary Effects.
     Notes
     -----
     The samples can be in trajectory or in radial design and the deviates can be
     from an arbitrary (correlated) normal distribution or an uncorrelated
     Uniform[0,1] distribution.
-
     Unorrelated uniform paramters require different interpretion of `mu`
     as a scaling summand rather than the expectation value.
-
     It might be necessary to multiply the SDs by `(n_trajs/(n_trajs - 1))`
     for the precise formula. However, this leads to problems for the case
     of only one trajectory - which is used in
     `test_screening_measures_uncorrelated_g_function`.
-
     """
     n_trajs = len(traj_list)
     n_rows = np.size(traj_list[0], 0)
     n_inputs = np.size(traj_list[0], 1)
 
     # Compute the transformed trajectory lists/function arguments.
+
+    # `If radial is true` `trans_pi_i_list` can be reused as ``trans_pi_iminus1_list`
+    # in subtrahend of EE_uncorr.
     trans_piplusone_i_list, trans_pi_i_list, coeff_step = trans_ee_uncorr(
         traj_list, cov, mu, radial
     )
@@ -83,13 +86,35 @@ def screening_measures(function, traj_list, step_list, cov, mu, radial=False):
     # Compute the function evaluations for each transformed trajectory list.
     for traj in range(0, n_trajs):
         for row in range(0, n_rows):
-            fct_evals_pi_i[row, traj] = function(*trans_pi_i_list[traj][row, :])
-            fct_evals_piplusone_i[row, traj] = function(
-                *trans_piplusone_i_list[traj][row, :]
-            )
-            fct_evals_piplusone_iminusone[row, traj] = function(
-                *trans_piplusone_iminusone_list[traj][row, :]
-            )
+
+            # In trajectory design `piplusone_i` is used as minuend and subtrahend.
+            if radial is False:
+                fct_evals_piplusone_i[row, traj] = function(
+                    *trans_piplusone_i_list[traj][row, :]
+                )
+                # pi_i is not reused for trajs, we do not need last row ofsubtrahend
+                if row < n_rows - 1:
+                    fct_evals_pi_i[row, traj] = function(*trans_pi_i_list[traj][row, :])
+
+            # For radial design, we do not need first row of subtrahend.
+            else:
+
+                # pi_i is reused as pi_i-1 for rads, we need all rows (see line 81-85).
+                fct_evals_pi_i[row, traj] = function(*trans_pi_i_list[traj][row, :])
+                if row < n_rows - 1:
+                    fct_evals_piplusone_i[row + 1, traj] = function(
+                        *trans_piplusone_i_list[traj][row + 1, :]
+                    )
+                else:
+                    pass
+
+            # We do not need first row of minuend.
+            if row < n_rows - 1:
+                    fct_evals_piplusone_iminusone[row + 1, traj] = function(
+                        *trans_piplusone_iminusone_list[traj][row + 1, :]
+                    )
+            else:
+                pass
 
     # Init individual EEs.
     ee_uncorr_i = np.ones([n_inputs, n_trajs]) * np.nan
@@ -118,21 +143,15 @@ def screening_measures(function, traj_list, step_list, cov, mu, radial=False):
             # Above, account for the scaling by the SD.
     else:
 
-        # Need to get the samples of first rows in different orders.
-        _, pp_one_row_zero = trans_ee_corr(traj_list, cov, mu, radial=True)
-
-        fct_evals_pp_one_row_zero = np.ones([n_rows, n_trajs]) * np.nan
 
         for traj in range(0, n_trajs):
-            for row in range(0, n_rows):
-                fct_evals_pp_one_row_zero[row, traj] = function(
-                    *pp_one_row_zero[traj][row, :]
-                )
 
-        for traj in range(0, n_trajs):
+            # Move last row of f-evals of pi_i=p1_i to top to recycle it.
+            temp = np.roll(fct_evals_pi_i[0:n_inputs, traj], 1)
+
             ee_corr_i[:, traj] = (
                 fct_evals_piplusone_iminusone[1 : n_inputs + 1, traj]
-                - fct_evals_pp_one_row_zero[0:n_inputs, traj]
+                - temp[0:n_inputs]
             ) / (step_list[traj] * np.squeeze(np.sqrt(np.diag(cov))))
             # Above, account for the scaling by the SD.
 
@@ -146,12 +165,74 @@ def screening_measures(function, traj_list, step_list, cov, mu, radial=False):
     sd_ee_corr = np.ones([n_inputs, 1]) * np.nan
 
     # Compute the aggregate screening measures.
-    ee_uncorr[:, 0] = np.mean(ee_uncorr_i, axis=1)
-    abs_ee_uncorr[:, 0] = np.mean(abs(ee_uncorr_i), axis=1)
-    sd_ee_uncorr[:, 0] = np.sqrt(np.var(ee_uncorr_i, axis=1))
+    ee_uncorr, abs_ee_uncorr, sd_ee_uncorr = compute_measures(ee_uncorr_i)
 
-    ee_corr[:, 0] = np.mean(ee_corr_i, axis=1)
-    abs_ee_corr[:, 0] = np.mean(abs(ee_corr_i), axis=1)
-    sd_ee_corr[:, 0] = np.sqrt(np.var(ee_corr_i, axis=1))
+    ee_corr, abs_ee_corr, sd_ee_corr = compute_measures(ee_corr_i)
 
-    return [ee_uncorr, ee_corr, abs_ee_uncorr, abs_ee_corr, sd_ee_uncorr, sd_ee_corr]
+    measures_list = [
+        ee_uncorr,
+        ee_corr,
+        abs_ee_uncorr,
+        abs_ee_corr,
+        sd_ee_uncorr,
+        sd_ee_corr,
+    ]
+
+    obs_list = [ee_uncorr_i, ee_corr_i]
+
+    return measures_list, obs_list
+
+def compute_measures(ee_i, sd_x=1, sd_y=1, sigma_norm=False, ub=False):
+    """Compute aggregate measures based on (individual) Elementary Effects.
+    Paramters
+    ---------
+    ee_i : ndarray
+        (individual) Elementary Effects of input paramters (cols).
+    sd_x : ndarray
+        Parameters' SD.
+    sd_y : float.
+        QoI's SD.
+    sigma_norm : bool
+        Indicates wether to compute measures normalized by `sd_x / sd_y`.
+    ub : bool
+        Indicates wether to compute squared EEs and measures normalized by `var_x / var_y`.
+    Returns
+    -------
+    measures_list: list
+       contains:
+            ee_mean : ndarray
+                Mean Elementary Effect for each parameter.
+            ee_abs_mean : ndarray
+                Mean absolute correlated Elementary Effect for each parameter.
+            ee_sd : ndarray
+                SD of correlated Elementary Effects for each parameter.
+    Notes
+    -----
+    `ub` follows http://www.andreasaltelli.eu/file/repository/DGSA_MATCOM_2009.pdf.
+    """
+    n_inputs = np.size(ee_i, 0)
+
+    if sigma_norm is not False:
+        norm = (sd_x / sd_y).reshape(n_inputs, 1)
+        ee_i = ee_i * norm
+    else:
+        pass
+
+    if ub is not False:
+        norm = (sd_x ** 2 / sd_y ** 2).reshape(n_inputs, 1)
+        ee_i = (ee_i ** 2) * norm
+    else:
+        pass
+
+    # Init measures.
+    ee_mean = np.ones([n_inputs, 1]) * np.nan
+    abs_ee_mean = np.ones([n_inputs, 1]) * np.nan
+    sd_ee = np.ones([n_inputs, 1]) * np.nan
+
+    # Compute the aggregate screening measures.
+    ee_mean[:, 0] = np.mean(ee_i, axis=1)
+    abs_ee_mean[:, 0] = np.mean(abs(ee_i), axis=1)
+    sd_ee[:, 0] = np.sqrt(np.var(ee_i, axis=1))
+
+    return ee_mean, abs_ee_mean, sd_ee
+

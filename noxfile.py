@@ -16,7 +16,7 @@ def install(name):
     subprocess.call(["pip", "install", name])
 
 
-# Install `poetry`. Appareantly required by my system in contrary to guide.
+# Install `poetry`. Appearantly required by my system in contrary to guide.
 install("poetry")
 
 
@@ -94,3 +94,4 @@ def tests(session: Session) -> None:
     session.run("poetry", "install", "--no-dev", external=True)
     install_with_constraints(session, "coverage[toml]", "pytest", "pytest-cov")
     session.run("pytest", *args)
+

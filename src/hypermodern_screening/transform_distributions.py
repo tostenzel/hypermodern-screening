@@ -1,8 +1,8 @@
 """
 Functions for the inverse Rosenblatt / inverse Nataf transformation
 from uniform to normal distribution.
-
 """
+
 import numpy as np
 import scipy.linalg as linalg
 from scipy.stats import norm
@@ -10,17 +10,14 @@ from scipy.stats import norm
 
 def covariance_to_correlation(cov):
     """Converts covariance matrix to correlation matrix.
-
     Parameters
     ----------
     cov : ndarray
         Covariance matrix.
-
     Returns
     -------
     corr : ndarray
         Correlation matrix.
-
     """
     # Standard deviations of each variable.
     sd = np.sqrt(np.diag(cov)).reshape(1, len(cov))
@@ -30,11 +27,10 @@ def covariance_to_correlation(cov):
     return corr
 
 
-def transform_uniform_stnormal_uncorr(uniform_deviates, numeric_zero=0.01):
+def transform_uniform_stnormal_uncorr(uniform_deviates, numeric_zero=0.005):
     """
     Converts sample from uniform distribution to standard normal space
     without regarding correlations.
-
     Parameters
     ----------
     uniform_deviates : ndarray
@@ -42,16 +38,13 @@ def transform_uniform_stnormal_uncorr(uniform_deviates, numeric_zero=0.01):
     numeric_zero : float
         Used to substitute zeros and ones before applying `scipy.stats.norm`
         to not obtain `-Inf` and `Inf`.
-
     Returns
     -------
     stnormal_deviates : ndarray
         `uniform deviates` converted to standard normal space without correlations.
-
     See Also
     --------
     morris_trajectory
-
     Notes
     -----
     This transformation is already applied as option in `morris_trajectory`.
@@ -60,10 +53,8 @@ def transform_uniform_stnormal_uncorr(uniform_deviates, numeric_zero=0.01):
     non-distorted screening measures, it is important to also account for this
     transformation of the step in the denominator to not violate the definition of
     the function derivation.
-
     The parameter `numeric_zero` can be highly influential. I prefer it to be
     relatively large to put more proportional, i.e. less weight on the extremes.
-
     """
 
     # Need to replace ones, because norm.ppf(1) = Inf and zeros because norm.ppf(0) = -Inf
@@ -84,11 +75,9 @@ def transform_stnormal_normal_corr(z_row, cov, mu):
     """
     Transformation from standard normal to multivariate normal space with given
     correlations following [1], page 77-102.
-
     Step 1) Compute correlation matrix.
     Step 2) Introduce dependencies to standard normal sample.
     Step 3) De-standardize sample to normal space.
-
     Parameters
     ----------
     z_row : ndarray
@@ -97,31 +86,25 @@ def transform_stnormal_normal_corr(z_row, cov, mu):
         Covariance matrix of correlated normal deviates.
     mu : ndarray
         Expectation values of correlated normal deviates
-
     Returns
     -------
     x_norm_row : ndarray
         Row of correlated normal deviates.
     correlate_step : float
         Lower right corner element of the lower Cholesky matrix.
-
     Notes
     -----
     Importantly, the step in the numerator of the uncorrelated Elementary Effect
     is multiplied by `correlate_step`. Therefore, this factor has to multiply
     the step in the denominator as well to not violate the definition of the
     function derivation.
-
     This method is equivalent to the one in [2], page 199 which uses the Cholesky
     decomposition of the covariance matrix directly. This saves the scaling by SD and
     expectation.
-
     This method is simpler and slightly more precise than the one in [3], page 33, for
     normally distributed paramters.
-
     [1] explains how Rosenblatt and Nataf transformation are equal for normally distributed
     deviates.
-
     References
     ----------
     [1] Lemaire, M. (2013). Structural reliability. John Wiley & Sons.
@@ -130,7 +113,6 @@ def transform_stnormal_normal_corr(z_row, cov, mu):
     [3] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global sensitivity
     analysis of models with dependent inputs. Reliability Engineering & System
     Safety 100 (162), 28–39.
-
     """
 
     # Convert covariance matrix to correlation matrix
@@ -152,3 +134,4 @@ def transform_stnormal_normal_corr(z_row, cov, mu):
     x_norm_row = x_norm.T
 
     return x_norm_row, correlate_step
+

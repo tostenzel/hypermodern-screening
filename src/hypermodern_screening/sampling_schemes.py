@@ -2,30 +2,24 @@ import random
 
 import chaospy as cp
 import numpy as np
-from hypermodern_screening.transform_distributions import (
-    transform_uniform_stnormal_uncorr,
-)
+from hypermodern_screening.transform_distributions import transform_uniform_stnormal_uncorr
 
 
 def stepsize(n_levels):
     """
     Computes stepsize to create equiprobable sample points for the trajectory design.
-
     Parameters
     ----------
     n_levels : int
         Number of points in a trajectory sample.
-
     Returns
     -------
     step : float
         Step added to each lower half point of the point grid.
-
     Raises
     ------
     AssertionError
         If the number of levels is not an even integer.
-
     Notes
     -----
     This function, published in [1], assumes that the number of sample points called
@@ -34,12 +28,10 @@ def stepsize(n_levels):
     formula, the step added to the lowest, second lowest, ..., highest point in the
     lower half creates the lowest, second lowest, ..., highest point in the upper half
     of the point grid.
-
     References
     ----------
     [1] Morris, M. D. (1991). Factorial sampling plans for preliminary computational experiments.
     Technometrics 33 (2), 161–174.
-
     """
     assert float(
         n_levels / 2
@@ -61,12 +53,10 @@ def morris_trajectory(
 ):
     """
     Creates random sample in trajectory design.
-
     This function creates a random sample for a number of function parameters
     (columns). The sample itself consists of the number plus one vectors of
     parameter draws (rows).
     It also computes the steps taken by each element.
-
     Parameters
     ----------
     n_inputs : int
@@ -84,7 +74,6 @@ def morris_trajectory(
         Constant step as function of `n_levels` added to lower half of point grid.
     stairs : bool
         if False: Randomly shuffle columns, dissolves stairs shape.
-
     Returns
     -------
     B_random : ndarray
@@ -93,12 +82,10 @@ def morris_trajectory(
     trans_steps : ndarray
         Column vector of steps added to base value point. Sorted by
         parameter/column. Dimension `n_inputs` x `1`.
-
     See Also
     --------
     stepsize : See parameter `step_function`.
     transform_uniform_stnormal_uncorr : See parameter `numeric_zero`.
-
     Notes
     -----
     The method is described in [1]. This function follows the notation therein.
@@ -109,7 +96,6 @@ def morris_trajectory(
     thereby obtaining one local derivative for each parameter. The order of rows and
     columns may be shuffled. Shuffling rows creates a negative stepsize. By default,
     the shuffling of columns is turned off to facilitate post-processing.
-
     Importantly, an additional option is to evaluate the points by the inverse
     normal cdf to account for normally distributed input paramters vice versa
     uniformly distributed ones. For this purpose, zeros and ones are slighly shifted
@@ -118,12 +104,10 @@ def morris_trajectory(
     on the stepsize and therefore the Elementary Effects.
     To account for transformations, the step is recomputed for each parameter by
     subtracting the last first row from the last row.
-
     References
     ----------
     [1] Morris, M. D. (1991). Factorial sampling plans for preliminary computational
     experiments. Technometrics 33 (2), 161–174.
-
     """
 
     np.random.seed(seed)
@@ -188,7 +172,6 @@ def trajectory_sample(
 ):
     """
     Loops over `morris_sample`.
-
     Parameters
     ----------
     n_inputs : int
@@ -206,14 +189,12 @@ def trajectory_sample(
         Constant step as function of `n_levels` added to lower half of point grid.
     stairs : bool
         if False: Randomly shuffle columns, dissolves stairs shape.
-
     Returns
     -------
     sample_traj_list : list of ndarrays
         Set of trajectories.
     steps_list : list of ndarrays
         Set of steps taken by each base row.
-
     """
     sample_traj_list = []
     steps_list = []
@@ -222,7 +203,7 @@ def trajectory_sample(
         seed = 123 + traj
 
         m_traj, steps = morris_trajectory(
-            n_inputs, n_levels, seed, normal, numeric_zero, step_function, stairs
+            n_inputs, n_levels, seed, normal, numeric_zero, step_function, stairs,
         )
 
         sample_traj_list.append(m_traj)
@@ -231,13 +212,11 @@ def trajectory_sample(
     return sample_traj_list, steps_list
 
 
-def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence="S"):
+def radial_sample(n_rad, n_inputs, normal=False, sequence="S"):
     """
     Generates sample in radial design as described in [1].
-
     For each subsample, there are `n_inputs + 1` rows and `n_inputs` colums.
     Each row is identical except of the diagonal of the sample w/o the first row.
-
     Parameters
     ----------
     n_rad : int
@@ -253,7 +232,6 @@ def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence="S"
         and `Inf` for 0 and 1.
     sequence : string
         Type of quasi-random sequence.
-
     Returns
     -------
     sample : ndarray
@@ -262,25 +240,19 @@ def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence="S"
     trans_steps : ndarray
         Column vector of steps added to base value point. Sorted by
         parameter/column. Dimension `n_inputs` x `1`.
-
     Notes
     -----
     See [2] for abbreviations of the different sequence types.
-
     In contrary to the trajectory design, the stepsize differs right from the start
     by design and only one element changes in each row compared to the first row.
-
     All distict elements in the whole sample are drawn at once because the
     default Sobol' sequence can not be reseeded.
-
     References
     ----------
     [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
     sensitivityanalysis of models with dependent inputs. Reliability Engineering &
     System Safety 100 (162), 28–39.
-
     [1] https://github.com/jonathf/chaospy/blob/master/chaospy/distributions/sampler/generator.py#L62
-
     """
 
     # Draw all elements at once.
@@ -302,7 +274,7 @@ def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence="S"
         # For standard normally distributed draws.
         if normal is True:
             rad_temp = np.apply_along_axis(
-                transform_uniform_stnormal_uncorr, 1, rad_temp, numeric_zero
+                transform_uniform_stnormal_uncorr, 1, rad_temp
             )
         else:
             pass
@@ -315,3 +287,4 @@ def radial_sample(n_rad, n_inputs, normal=False, numeric_zero=0.01, sequence="S"
         steps_list.append(steps_temp)
 
     return rad_list, steps_list
+

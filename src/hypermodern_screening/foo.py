@@ -25,15 +25,9 @@ def main():
 
     traj_list, step_list = radial_sample(n_sample, n_inputs, normal=True)
 
-    measures_list = screening_measures(
+    measures_list, _ = screening_measures(
         linear_function, traj_list, step_list, cov, mu, radial=True
     )
 
-    ee_uncorr = measures_list[0]
-    ee_corr = measures_list[1]
-    abs_ee_uncorr = measures_list[2]
-    abs_ee_corr = measures_list[3]
-    sd_ee_uncorr = measures_list[4]
-    sd_ee_corr = measures_list[5]
 
-    print(ee_uncorr, "test")
+    print(measures_list[1], "test")
