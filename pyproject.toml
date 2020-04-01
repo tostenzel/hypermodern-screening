@@ -30,6 +30,7 @@ pytype = {version = "^2020.3.19", python = "3.7"}
 flake8-annotations = "^2.0.1"
 flake8-docstrings = "^1.5.0"
 darglint = "^1.2.0"
+xdoctest = "^0.12.0"
 
 [tool.poetry.scripts]
 hypermodern-screening = "hypermodern_screening.foo:main"

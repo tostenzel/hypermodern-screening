@@ -125,3 +125,14 @@ def typeguard(session: Session) -> None:
     install_with_constraints(session, "pytest", "typeguard")
     session.run("pytest", f"--typeguard-packages={package}", *args)
 
+
+# noxfile.py
+@nox.session(python=["3.8", "3.7"])
+def xdoctest(session: Session) -> None:
+    """Run examples with xdoctest."""
+    args = session.posargs or ["all"]
+    session.run("poetry", "install", "--no-dev", external=True)
+    install_with_constraints(session, "xdoctest")
+    session.run("python", "-m", "xdoctest", package, *args)
+
+

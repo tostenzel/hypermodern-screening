@@ -95,10 +95,12 @@ def combi_wrapper(iterable: Iterable, r: int) -> List:
     -------
     list_list : list of lists
         All possible combinations in ascending order.
+
     Example
     -------
-    combi_wrapper([0, 1, 2, 3], 2) returns
-    [[0, 1], [0,2], [0,3], [1,2], [1,3], [2,3]].
+    >>> combi_wrapper([0, 1, 2, 3], 2)
+    [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]
+
     References
     ----------
     [1] https://docs.python.org/2/library/itertools.html#itertools.combinations.
