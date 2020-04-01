@@ -11,7 +11,7 @@ nox.options.sessions = "lint", "mypy", "pytype", "safety", "tests"
 locations = "src", "tests", "noxfile.py"
 
 
-def install(name):
+def install(name: str) -> None:
     """Install python package via pip"""
     subprocess.call(["pip", "install", name])
 
@@ -64,7 +64,6 @@ def lint(session: Session) -> None:
         "flake8-bandit",
         "flake8-black",
         "flake8-bugbear",
-        "flake8-docstrings",
         "flake8-import-order",
     )
     session.run("flake8", *args)
@@ -97,14 +96,14 @@ def tests(session: Session) -> None:
 
 
 @nox.session(python=["3.8", "3.7"])
-def mypy(session):
+def mypy(session: Session) -> None:
     args = session.posargs or locations
     install_with_constraints(session, "mypy")
     session.run("mypy", *args)
 
 
 @nox.session(python="3.7")
-def pytype(session):
+def pytype(session: Session) -> None:
     """Run the static type checker."""
     args = session.posargs or ["--disable=import-error", *locations]
     install_with_constraints(session, "pytype")
@@ -112,8 +111,9 @@ def pytype(session):
 
 
 @nox.session(python=["3.8", "3.7"])
-def typeguard(session):
+def typeguard(session: Session) -> None:
     args = session.posargs or ["-m", "not e2e"]
     session.run("poetry", "install", "--no-dev", external=True)
     install_with_constraints(session, "pytest", "typeguard")
     session.run("pytest", f"--typeguard-packages={package}", *args)
+

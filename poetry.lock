@@ -191,6 +191,21 @@ pyflakes = ">=2.1.0,<2.2.0"
 
 [[package]]
 category = "dev"
+description = "Flake8 Type Annotation Checks"
+name = "flake8-annotations"
+optional = false
+python-versions = ">=3.6,<4.0"
+version = "2.0.1"
+
+[package.dependencies]
+flake8 = ">=3.7.9,<4.0.0"
+
+[package.dependencies.typed-ast]
+python = "<3.8"
+version = ">=1.4,<2.0"
+
+[[package]]
+category = "dev"
 description = "Automated security testing with bandit and flake8."
 name = "flake8-bandit"
 optional = false
@@ -743,7 +758,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "00d4999a05dd3db49913cd835a6c1fed2b7e8ff9748451f2050f39a5e6690cd4"
+content-hash = "24bf0632ae9fb859c29a9fdab504104095e6494bb1f15c43bf701376b41bc27d"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -842,6 +857,10 @@ filelock = [
 flake8 = [
     {file = "flake8-3.7.9-py2.py3-none-any.whl", hash = "sha256:49356e766643ad15072a789a20915d3c91dc89fd313ccd71802303fd67e4deca"},
     {file = "flake8-3.7.9.tar.gz", hash = "sha256:45681a117ecc81e870cbf1262835ae4af5e7a8b08e40b944a8a6e6b895914cfb"},
+]
+flake8-annotations = [
+    {file = "flake8-annotations-2.0.1.tar.gz", hash = "sha256:a38b44d01abd480586a92a02a2b0a36231ec42dcc5e114de78fa5db016d8d3f9"},
+    {file = "flake8_annotations-2.0.1-py3-none-any.whl", hash = "sha256:d5b0e8704e4e7728b352fa1464e23539ff2341ba11cc153b536fa2cf921ee659"},
 ]
 flake8-bandit = [
     {file = "flake8_bandit-2.1.2.tar.gz", hash = "sha256:687fc8da2e4a239b206af2e54a90093572a60d0954f3054e23690739b0b0de3b"},
