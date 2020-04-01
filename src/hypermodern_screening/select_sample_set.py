@@ -13,6 +13,7 @@ sensitivity analysis of large models. Environmental modelling & software 22 (10)
 computationally expensive microscopic traffic simulation models. International Journal of
 Transportation 2 (2), 49–64.
 """
+from typing import Iterable, List, Tuple
 from itertools import combinations
 
 import numpy as np
@@ -20,7 +21,7 @@ from scipy.special import binom
 from hypermodern_screening.transform_distributions import transform_uniform_stnormal_uncorr
 
 
-def compute_pair_distance(sample_0, sample_1):
+def compute_pair_distance(sample_0: np.ndarray, sample_1: np.ndarray) -> float:
     """
     Computes the distance measure between a pair of samples.
     The aggregate distance between sum of the root of the square distance between each
@@ -60,7 +61,7 @@ def compute_pair_distance(sample_0, sample_1):
     return distance
 
 
-def distance_matrix(sample_list):
+def distance_matrix(sample_list: List) -> np.ndarray:
     """
     Computes symmetric matrix of pair distances for a list of samples.
     Parameters
@@ -81,7 +82,7 @@ def distance_matrix(sample_list):
     return distance_matrix
 
 
-def combi_wrapper(iterable, r):
+def combi_wrapper(iterable: Iterable, r: int) -> List:
     """
     Wrapper around `itertools.combinations`, written in C, see [1].
     Parameters
@@ -108,7 +109,7 @@ def combi_wrapper(iterable, r):
     return list_list
 
 
-def total_distance(distance_matrix):
+def total_distance(distance_matrix: np.ndarray) -> float:
     """
     Computes the total distance measure of all pairs of samples in a set.
     The equation corresponds to Equation (10) in [2].
@@ -127,7 +128,7 @@ def total_distance(distance_matrix):
     return total_distance
 
 
-def select_trajectories(pair_dist_matrix, n_traj):
+def select_trajectories(pair_dist_matrix: np.ndarray, n_traj: int) -> Tuple[List, np.ndarray]:
     """
     Computes `total distance` for each `n_traj` combinations of a set of samples.
     Parameters
@@ -195,7 +196,9 @@ def select_trajectories(pair_dist_matrix, n_traj):
     return max_dist_indices, combi_total_distance
 
 
-def select_trajectories_wrapper_iteration(pair_dist_matrix, n_traj):
+def select_trajectories_wrapper_iteration(
+    pair_dist_matrix: np.ndarray, n_traj:int
+    ) -> Tuple[List, np.ndarray]:
     """
     Selects the set of samples minus one sample.
     Used for selecting iteratively rather than by brute force.
@@ -256,7 +259,7 @@ def select_trajectories_wrapper_iteration(pair_dist_matrix, n_traj):
     return tracker_keep_indices, combi_total_distance
 
 
-def campolongo_2007(sample_traj_list, n_traj):
+def campolongo_2007(sample_traj_list: List, n_traj: int) -> Tuple[List, np.ndarray, List]:
     """
     Implements the post-selected sample set in [1].
     Takes a list of Morris trajectories and selects the `n_traj` trajectories
@@ -290,7 +293,9 @@ def campolongo_2007(sample_traj_list, n_traj):
     return select_trajs, select_dist_matrix, select_indices
 
 
-def intermediate_ge_menendez_2014(sample_traj_list, n_traj):
+def intermediate_ge_menendez_2014(
+    sample_traj_list: List, n_traj: int
+    ) -> Tuple[List, np.ndarray, List]:
     """
     Implements the essential of the two "improvements" in[2] vis-a-vis [1].
     This is basically a wrapper around `select_trajectories_wrapper_iteration`.

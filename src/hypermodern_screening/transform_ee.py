@@ -9,6 +9,7 @@ References
 sensitivity analysis of models with dependent inputs. Reliability Engineering &
 System Safety 100 (162), 28–39.
 """
+from typing import List, Tuple, Union
 import numpy as np
 from hypermodern_screening.transform_distributions import transform_stnormal_normal_corr
 from hypermodern_screening.transform_reorder import ee_corr_reorder_sample
@@ -21,7 +22,9 @@ from hypermodern_screening.transform_reorder import reverse_reorder_cov
 from hypermodern_screening.transform_reorder import reverse_reorder_mu
 
 
-def trans_ee_uncorr(sample_list, cov, mu, radial=False):
+def trans_ee_uncorr(
+    sample_list: List, cov: np.ndarray, mu: np.ndarray, radial: bool=False
+    ) -> Tuple[List, List, List]:
     """
     Transforms list of samples to two lists of transformed samples
     for the computation of the uncorrelated Elementary Effects.
@@ -29,9 +32,9 @@ def trans_ee_uncorr(sample_list, cov, mu, radial=False):
     ----------
     sample_list : list of ndarrays
         Set of untransformed samples.
-    cov : ndarray
+    cov : np.ndarray
         Covariance matrix.
-    mu : ndarray
+    mu : np.ndarray
         Expectation value.
     radial : bool
         Sample is in trajectory or radial design.
@@ -143,7 +146,9 @@ def trans_ee_uncorr(sample_list, cov, mu, radial=False):
     return trans_piplusone_i, trans_pi_i, coeff_step
 
 
-def trans_ee_corr(sample_list, cov, mu, radial=False):
+def trans_ee_corr(
+    sample_list: List, cov: np.ndarray, mu: np.ndarray, radial: bool=False
+    ) -> Tuple[List, Union[List, None]]:
     """
     Transforms list of samples to two lists of transformed samples
     for the computation of the correlated Elementary Effects.

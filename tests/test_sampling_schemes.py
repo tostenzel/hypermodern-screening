@@ -7,7 +7,7 @@ from hypermodern_screening.sampling_schemes import morris_trajectory
 from hypermodern_screening.sampling_schemes import radial_sample
 
 
-def test_morris_trajectory_value_grid():
+def test_morris_trajectory_value_grid() -> None:
     """
     Tests wether the point grid is composed of the rights values.
     Notes
@@ -33,7 +33,7 @@ def test_morris_trajectory_value_grid():
     assert grid == expected
 
 
-def test_radial_sample():
+def test_radial_sample() -> None:
     """
     Tests wether for each row i (non-pythonic), only the ith elements is
     different from the first row for a sample of radial subsamples.

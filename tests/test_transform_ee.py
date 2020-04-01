@@ -6,7 +6,7 @@ from hypermodern_screening.sampling_schemes import trajectory_sample
 from hypermodern_screening.transform_ee import trans_ee_uncorr
 
 
-def test_trans_ee_uncorr_trajectories():
+def test_trans_ee_uncorr_trajectories() -> None:
     """
     Intregation test for `trans_ee_uncorr_trajectories`
     Notes

@@ -8,7 +8,7 @@ import scipy.linalg as linalg
 from scipy.stats import norm
 
 
-def covariance_to_correlation(cov):
+def covariance_to_correlation(cov: np.ndarray) -> np.ndarray:
     """Converts covariance matrix to correlation matrix.
     Parameters
     ----------
@@ -27,7 +27,9 @@ def covariance_to_correlation(cov):
     return corr
 
 
-def transform_uniform_stnormal_uncorr(uniform_deviates, numeric_zero=0.005):
+def transform_uniform_stnormal_uncorr(
+    uniform_deviates: np.ndarray, numeric_zero: int=0.005
+    ) -> np.ndarray:
     """
     Converts sample from uniform distribution to standard normal space
     without regarding correlations.

@@ -9,13 +9,9 @@ sensitivity analysis of large models. Environmental modelling & software 22 (10)
 computationally expensive microscopic traffic simulation models. International Journal of
 Transportation 2 (2), 49–64.
 """
-import sys
-
-# Define parent folder as relative path.
-sys.path.append("..")
-
 import numpy as np
 import pytest
+from typing import List
 
 from numpy.testing import assert_array_equal
 
@@ -31,21 +27,21 @@ from hypermodern_screening.select_sample_set import total_distance
 from hypermodern_screening.select_sample_set import final_ge_menendez_2014
 
 
-def test_compute_pair_distance():
+def test_compute_pair_distance() -> None:
     """Unit test for function `compute_pair_distance`"""
     traj_0 = np.ones((3, 2))
     traj_1 = np.zeros((3, 2))
     assert 4 * np.sqrt(3) == compute_pair_distance(traj_0, traj_1)
 
 
-def test_distance_matrix():
+def test_distance_matrix() -> None:
     """Unit test for function `distance_matrix`"""
     traj_list = [np.ones((3, 2)), np.zeros((3, 2))]
     expected = np.array([[0, 4 * np.sqrt(3)], [4 * np.sqrt(3), 0]])
     assert_array_equal(expected, distance_matrix(traj_list))
 
 
-def test_combi_wrapper():
+def test_combi_wrapper() -> None:
     """Unit test for function `combi_wrapper`"""
     expected_0 = [[0]]
     expected_1 = [[0], [1]]
@@ -59,7 +55,7 @@ def test_combi_wrapper():
     assert expected_4 == combi_wrapper([0, 1, 2, 3], 2)
 
 
-def test_select_trajectories_1():
+def test_select_trajectories_1() -> None:
     """
     Small unit test for `select_trajectories` by reducing the sample set by
     one sample. Tests only the combination that yields the maximal `total_distance`.
@@ -78,13 +74,13 @@ def test_select_trajectories_1():
 
 
 @pytest.fixture
-def dist_matrix():
+def dist_matrix() -> np.ndarray:
     """Fix dist_matrix for the next two tests."""
     dist_matrix = np.array([[0, 4, 5, 6], [4, 0, 7, 8], [5, 7, 0, 9], [6, 8, 9, 0]])
     return dist_matrix
 
 
-def test_select_trajectories_2(dist_matrix):
+def test_select_trajectories_2(dist_matrix) -> None:
     """The difference between sample and selection size is not large enough for high trust."""
     exp_max_dist_indices = [1, 2, 3]
 
@@ -124,7 +120,7 @@ def test_select_trajectories_3(dist_matrix):
     assert_array_equal(exp_combi_distance, combi_distance)
 
 
-def test_select_trajectories_iteration_1():
+def test_select_trajectories_iteration_1() -> None:
     """
     Small unit test for `select_trajectories_wrapper_iteration` by reducing
     the sample set by one sample.
@@ -146,7 +142,7 @@ def test_select_trajectories_iteration_1():
     assert_array_equal(exp_combi_distance, combi_distance)
 
 
-def test_select_trajectories_iteration_2():
+def test_select_trajectories_iteration_2() -> None:
     """
     Small unit test for `select_trajectories_wrapper_iteration` by reducing
     the sample set by one sample.
@@ -164,7 +160,7 @@ def test_select_trajectories_iteration_2():
 
 
 @pytest.fixture
-def numbers():
+def numbers() -> List[int]:
     """Fix numbers for the next four tests."""
     n_inputs = 4
     n_levels = 10
@@ -175,7 +171,7 @@ def numbers():
 
 
 @pytest.fixture
-def sample_traj_list(numbers):
+def sample_traj_list(numbers: List[int]) -> List[np.ndarray]:
     """Fix sample set for the next four tests."""
     sample_traj_list = list()
     for traj in range(0, numbers[2]):
@@ -188,14 +184,16 @@ def sample_traj_list(numbers):
 
 
 @pytest.fixture
-def traj_selection(sample_traj_list, numbers):
+def traj_selection(sample_traj_list: List[np.ndarray], numbers: List[int]) -> List:
     """Fix sample set and distance matrix for the next four tests."""
     select_list, select_distance_matrix, _ = campolongo_2007(sample_traj_list, numbers[3])
 
     return [select_list, select_distance_matrix]
 
 
-def test_compare_camp_07_int_ge_men_14_2(numbers, sample_traj_list, traj_selection):
+def test_compare_camp_07_int_ge_men_14_2(
+    numbers: List[int], sample_traj_list: List[np.ndarray], traj_selection: List
+    ) -> None:
     """
     Tests wether the trajectory set computed by compolongo_2007
     and intermediate_ge_menendez_2014 are reasonably close in terms
@@ -212,7 +210,9 @@ def test_compare_camp_07_int_ge_men_14_2(numbers, sample_traj_list, traj_selecti
     assert dist_camp - dist_gm < 0.03 * dist_camp
 
 
-def test_compare_camp_07_final_ge_men_14_2(numbers, sample_traj_list, traj_selection):
+def test_compare_camp_07_final_ge_men_14_2(
+    numbers: List[int], sample_traj_list: List, traj_selection: List
+    ) -> None:
     """
     Tests wether the trajectory set computed by compolongo_2007
     and final_ge_menendez_2014 are reasonably close in terms
@@ -239,7 +239,9 @@ def test_compare_camp_07_final_ge_men_14_2(numbers, sample_traj_list, traj_selec
     selects a different, slightly worse trajectory set\
     compared to campolongo_2007."
 )
-def test_compare_camp_07_int_ge_men_14_1(numbers, sample_traj_list, traj_selection):
+def test_compare_camp_07_int_ge_men_14_1(
+    numbers: List[int], sample_traj_list: List, traj_selection: List
+    ) -> None:
     """
     Tests wether the sample set and distance matrix of the [1] and the first part
     of the improvment in [2] are identical.
@@ -259,7 +261,9 @@ def test_compare_camp_07_int_ge_men_14_1(numbers, sample_traj_list, traj_selecti
     selects a different, slightly worse trajectory set\
     compared to campolongo_2007."
 )
-def test_compare_camp_07_final_ge_men_14_1(numbers, sample_traj_list, traj_selection):
+def test_compare_camp_07_final_ge_men_14_1(
+    numbers: List[int], sample_traj_list: List, traj_selection: List
+    ) -> None:
     """
     Tests wether the sample set and distance matrix of the [1] and the both parts
     of the improvment in [2] are identical.

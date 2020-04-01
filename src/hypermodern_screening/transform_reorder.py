@@ -25,7 +25,7 @@ System Safety 100 (162), 28–39.
 import numpy as np
 
 
-def ee_uncorr_reorder_sample(sample, row_plus_one=True):
+def ee_uncorr_reorder_sample(sample: np.ndarray, row_plus_one: bool=True) -> np.ndarray:
     """
     For each row i (non-pythonic), move the first i elements to the back.
     Parameters
@@ -58,7 +58,9 @@ def ee_uncorr_reorder_sample(sample, row_plus_one=True):
     return sample_reordered
 
 
-def reverse_ee_uncorr_reorder_sample(sample_reordered, row_plus_one=True):
+def reverse_ee_uncorr_reorder_sample(
+    sample_reordered: np.ndarray, row_plus_one: bool=True
+    ) -> np.ndarray:
     """
     Reverse of function `uncorr_reorder_sample`.
     Parameters
@@ -89,15 +91,14 @@ def reverse_ee_uncorr_reorder_sample(sample_reordered, row_plus_one=True):
     return sample
 
 
-def ee_corr_reorder_sample(sample):
+def ee_corr_reorder_sample(sample: np.ndarray) -> np.ndarray:
     """
     For each row i (non-pythonic), move the first i-1 elements to the back.
     Parameters
     ----------
     sample : ndarray
         sample.
-    row_plus_one : bool
-        Add 1 to row index, i.e. start with second row.
+
     Returns
     -------
     sample_reordered : ndarray
@@ -118,13 +119,15 @@ def ee_corr_reorder_sample(sample):
     return sample_reordered
 
 
-def reverse_ee_corr_reorder_sample(sample_reordered):
+def reverse_ee_corr_reorder_sample(sample_reordered: np.ndarray) -> np.ndarray:
     """
     Reverse of function `corr_reorder_sample`.
+
     Parameters
     ----------
     sample_reordered : ndarray
         Reordered sample.
+
     Returns
     -------
     sample : ndarray
@@ -142,13 +145,15 @@ def reverse_ee_corr_reorder_sample(sample_reordered):
     return sample
 
 
-def reorder_mu(mu):
+def reorder_mu(mu: np.ndarray) -> np.ndarray:
     """
     Move the first element of the expectation vector to the end.
+
     Parameters
     ----------
     mu : ndarray
         Expectation values of row.
+
     Returns
     -------
     mu_reordered : ndarray
@@ -159,7 +164,7 @@ def reorder_mu(mu):
     return mu_reordered
 
 
-def reorder_cov(cov):
+def reorder_cov(cov: np.ndarray) -> np.ndarray:
     """
     Arrange covariance matrix according to the expectation vector when
     the first element is moved to the end.
@@ -187,7 +192,7 @@ def reorder_cov(cov):
     return cov_reordered
 
 
-def reverse_reorder_mu(mu_reordered):
+def reverse_reorder_mu(mu_reordered: np.ndarray) -> np.ndarray:
     """
     Reverse of function `reorder_mu`.
     Parameters
@@ -204,7 +209,7 @@ def reverse_reorder_mu(mu_reordered):
     return mu
 
 
-def reverse_reorder_cov(cov_reordered):
+def reverse_reorder_cov(cov_reordered: np.ndarray) -> np.ndarray:
     """
     Reverse of function `reorder_cov`.
     Parameters

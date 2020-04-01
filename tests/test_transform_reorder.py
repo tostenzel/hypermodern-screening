@@ -14,13 +14,13 @@ from hypermodern_screening.transform_reorder import reverse_reorder_cov
 
 
 @pytest.fixture
-def traj():
+def traj() -> np.ndarray:
     """Fix sample for next two tests."""
     traj = np.array([[0, 0, 0], [1, 0, 0], [2, 3, 0], [4, 5, 6]])
     return traj
 
 
-def test_ee_uncorr_reorder_sample(traj):
+def test_ee_uncorr_reorder_sample(traj: np.ndarray) -> None:
     """
     Unit tests for `ee_uncorr_reorder_sample` and
     `reverse_ee_uncorr_reorder_sample`.
@@ -47,7 +47,7 @@ def test_ee_uncorr_reorder_sample(traj):
     )
 
 
-def test_ee_corr_reorder_sample(traj):
+def test_ee_corr_reorder_sample(traj: np.ndarray) -> None:
     """
     Unit tests for `ee_corr_reorder_sample` and
     `reverse_ee_corr_reorder_sample`.
@@ -63,13 +63,13 @@ def test_ee_corr_reorder_sample(traj):
 
 
 @pytest.fixture
-def mu():
+def mu() -> np.ndarray:
     """Fix expectation values for next test."""
     mu = np.arange(10)
     return mu
 
 
-def test_reorder_mu(mu):
+def test_reorder_mu(mu: np.ndarray) -> None:
     """Unit tests for `reorder_mu` and `reverse_reorder_mu`."""
     expected = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
     assert_array_equal(expected, reorder_mu(mu))
@@ -81,7 +81,7 @@ def test_reorder_mu(mu):
 
 
 @pytest.fixture
-def cov():
+def cov() -> np.ndarray:
     """Fix covariance matrix for next test."""
     cov = np.array(
         [
@@ -95,7 +95,7 @@ def cov():
     return cov
 
 
-def test_reorder_cov(cov):
+def test_reorder_cov(cov: np.ndarray) -> None:
     """Unit tests for `reorder_cov` and `reverse_reorder_mu`."""
     expected = np.array(
         [

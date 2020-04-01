@@ -9,7 +9,7 @@ from hypermodern_screening.screening_measures import screening_measures
 from hypermodern_screening.screening_measures import compute_measures
 
 
-def test_compute_measures():
+def test_compute_measures() -> None:
     """Tests the normalization option by `(sd_x / sd_y)` of `compute_measures`."""
     ee_i = np.array([1, 1]*3).reshape(3,2)
 
@@ -40,7 +40,7 @@ def sobol_model(a, b, c, d, e, f, coeffs, *args):
     return y
 
 
-def test_screening_measures_trajectory_uncorrelated_g_function():
+def test_screening_measures_trajectory_uncorrelated_g_function() -> None:
     """
     Tests the screening measures for six uncorrelated parameters.
     Data and results taken from pages 123 - 127 in [1]. The data is
@@ -203,7 +203,7 @@ def lin_portfolio(q1, q2, c1=2, c2=1, *args):
     return c1 * q1 + c2 * q2
 
 
-def test_screening_measures_trajectory_uncorrelated_linear_function():
+def test_screening_measures_trajectory_uncorrelated_linear_function() -> None:
     """
     Test for a linear function with two paramters. Non-unit variance and EEs are coefficients.
     Results data taken from [1], page 335.
@@ -263,7 +263,7 @@ def linear_function(a, b, c, *args):
     return a + b + c
 
 
-def test_linear_model_equality_radial_trajectory():
+def test_linear_model_equality_radial_trajectory() -> None:
     """
     Tests whether `screening_measures` yields the same results for samples in radial
     and in trajectory design. This yields confidence in the radial option, as the

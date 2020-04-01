@@ -1,3 +1,4 @@
+from typing import Callable, List, Tuple
 import random
 
 import chaospy as cp
@@ -5,7 +6,7 @@ import numpy as np
 from hypermodern_screening.transform_distributions import transform_uniform_stnormal_uncorr
 
 
-def stepsize(n_levels):
+def stepsize(n_levels: int) -> float:
     """
     Computes stepsize to create equiprobable sample points for the trajectory design.
     Parameters
@@ -43,14 +44,14 @@ def stepsize(n_levels):
 
 
 def morris_trajectory(
-    n_inputs,
-    n_levels,
-    seed=123,
-    normal=False,
-    numeric_zero=0.01,
-    step_function=stepsize,
-    stairs=True,
-):
+    n_inputs: int,
+    n_levels: int,
+    seed: int=123,
+    normal: bool=False,
+    numeric_zero: float=0.01,
+    step_function: Callable=stepsize,
+    stairs: bool=True,
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Creates random sample in trajectory design.
     This function creates a random sample for a number of function parameters
@@ -161,15 +162,15 @@ def morris_trajectory(
 
 
 def trajectory_sample(
-    n_traj,
-    n_inputs,
-    n_levels,
-    seed=123,
-    normal=False,
-    numeric_zero=0.01,
-    step_function=stepsize,
-    stairs=True,
-):
+    n_traj: int,
+    n_inputs: int,
+    n_levels: int,
+    seed: int=123,
+    normal: bool=False,
+    numeric_zero: float=0.01,
+    step_function: Callable=stepsize,
+    stairs: bool=True,
+) -> Tuple[list, list]:
     """
     Loops over `morris_sample`.
     Parameters
@@ -191,9 +192,9 @@ def trajectory_sample(
         if False: Randomly shuffle columns, dissolves stairs shape.
     Returns
     -------
-    sample_traj_list : list of ndarrays
+    sample_traj_list : list of np.ndarrays
         Set of trajectories.
-    steps_list : list of ndarrays
+    steps_list : list of np.ndarrays
         Set of steps taken by each base row.
     """
     sample_traj_list = []
@@ -212,7 +213,9 @@ def trajectory_sample(
     return sample_traj_list, steps_list
 
 
-def radial_sample(n_rad, n_inputs, normal=False, sequence="S"):
+def radial_sample(
+    n_rad: int, n_inputs: int, normal: bool=False, sequence: str="S"
+    ) -> Tuple[list, list]:
     """
     Generates sample in radial design as described in [1].
     For each subsample, there are `n_inputs + 1` rows and `n_inputs` colums.
@@ -234,10 +237,10 @@ def radial_sample(n_rad, n_inputs, normal=False, sequence="S"):
         Type of quasi-random sequence.
     Returns
     -------
-    sample : ndarray
+    sample : list of np.ndarrays
         Random sample in radial design.
         Dimension `n_inputs` x `n_inputs + 1`.
-    trans_steps : ndarray
+    trans_steps : list of np.ndarrays
         Column vector of steps added to base value point. Sorted by
         parameter/column. Dimension `n_inputs` x `1`.
     Notes

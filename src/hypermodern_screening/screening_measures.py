@@ -8,12 +8,17 @@ References
 sensitivityanalysis of models with dependent inputs. Reliability Engineering &
 System Safety 100 (162), 28–39.
 """
+from typing import Callable, List, Tuple
 import numpy as np
+
 from hypermodern_screening.transform_ee import trans_ee_corr
 from hypermodern_screening.transform_ee import trans_ee_uncorr
 
 
-def screening_measures(function, traj_list, step_list, cov, mu, radial=False):
+def screening_measures(
+    function: Callable, traj_list: List, step_list:List, cov: np.ndarray,
+    mu: np.ndarray, radial: bool=False
+    ) -> Tuple[List, List]:
     """
     Computes screening measures for a set of paramters.
     Parameters
@@ -24,9 +29,9 @@ def screening_measures(function, traj_list, step_list, cov, mu, radial=False):
         List of transformed trajectories according to [1].
     step_list : list of ndarrays
         List of steps that each parameter takes in each trajectory.
-    cov : ndarray
+    cov : np.ndarray
         Covariance matrix of the input parameters.
-    mu : ndarray
+    mu : np.ndarray
         Expectation values of the input parameters.
     radial : bool
         Sample is in trajectory or radial design.
@@ -182,13 +187,18 @@ def screening_measures(function, traj_list, step_list, cov, mu, radial=False):
 
     return measures_list, obs_list
 
-def compute_measures(ee_i, sd_x=1, sd_y=1, sigma_norm=False, ub=False):
+
+def compute_measures(
+    ee_i: np.ndarray, sd_x: np.ndarray=np.array([1]),
+    sd_y: np.ndarray=np.array([1]), sigma_norm :bool=False,
+    ub :bool=False
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Compute aggregate measures based on (individual) Elementary Effects.
     Paramters
     ---------
-    ee_i : ndarray
+    ee_i : np.ndarray
         (individual) Elementary Effects of input paramters (cols).
-    sd_x : ndarray
+    sd_x : float
         Parameters' SD.
     sd_y : float.
         QoI's SD.
@@ -200,11 +210,11 @@ def compute_measures(ee_i, sd_x=1, sd_y=1, sigma_norm=False, ub=False):
     -------
     measures_list: list
        contains:
-            ee_mean : ndarray
+            ee_mean : np.ndarray
                 Mean Elementary Effect for each parameter.
-            ee_abs_mean : ndarray
+            ee_abs_mean : np.ndarray
                 Mean absolute correlated Elementary Effect for each parameter.
-            ee_sd : ndarray
+            ee_sd : np.ndarray
                 SD of correlated Elementary Effects for each parameter.
     Notes
     -----

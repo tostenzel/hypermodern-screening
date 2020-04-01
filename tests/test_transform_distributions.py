@@ -9,7 +9,7 @@ from tests.resources.nataf_transformation import nataf_transformation
 from tests.resources.distributions import distributions
 
 
-def test_covariance_to_correlation():
+def test_covariance_to_correlation() -> None:
     """Unit test for `covariance_to_correlation`."""
     cov = np.array([[10, 0.2, 0.5], [0.2, 40, 0], [0.5, 0, 50]])
     expected = np.array([[1, 0.01, 0.0223], [0.01, 1, 0], [0.0223, 0, 1]])
@@ -18,7 +18,7 @@ def test_covariance_to_correlation():
     assert_allclose(corr, expected, atol=0.0001)
 
 
-def test_transform_stnormal_normal_corr():
+def test_transform_stnormal_normal_corr() -> None:
     """
     Compares the implementation of the inverse Rosenblatt/inverse Nataf transformation
     for normally distributed deviates with the implementation [1] for several
