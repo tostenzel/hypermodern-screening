@@ -1,3 +1,5 @@
+# type: ignore
+
 # import of modules
 import numpy as np
 import scipy as sp

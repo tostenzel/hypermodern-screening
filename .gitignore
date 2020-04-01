@@ -1,6 +1,8 @@
 # My additions
 /.nox/
 /.python-version
+/.mypy_cache/
+/.pytype/
 
 
 

@@ -1,3 +1,5 @@
+# type: ignore
+
 # import of modules
 import numpy as np
 from tests.resources.distributions import distributions
