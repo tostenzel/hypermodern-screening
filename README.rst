@@ -9,5 +9,5 @@ README
   :target: https://codecov.io/gh/tostenzel/hypermodern-screening
 
 .. image:: https://readthedocs.org/projects/hypermodern-screening/badge/?version=latest
-:target: https://hypermodern-screening.readthedocs.io/en/latest/?badge=latest
-:alt: Documentation Status
+   :target: https://hypermodern-screening.readthedocs.io/en/latest/?badge=latest
+
