@@ -2,9 +2,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 
 from hypermodern_screening.transform_distributions import covariance_to_correlation
-from hypermodern_screening.transform_distributions import (
-    transform_uniform_stnormal_uncorr,
-)
+from hypermodern_screening.transform_distributions import transform_uniform_stnormal_uncorr
 from hypermodern_screening.transform_distributions import transform_stnormal_normal_corr
 
 from tests.resources.nataf_transformation import nataf_transformation
@@ -26,11 +24,9 @@ def test_transform_stnormal_normal_corr():
     for normally distributed deviates with the implementation [1] for several
     distributions by TUM Department of Civil, Geo and Environmental Engineering
     Technical University of Munich.
-
     References
     ----------
     [1] https://www.bgu.tum.de/en/era/software/eradist/.
-
     """
     # Expectation values.
     mu = np.array([10, 10, 10, 10, 10])
@@ -68,3 +64,4 @@ def test_transform_stnormal_normal_corr():
     X = T_Nataf.U2X(z)
 
     assert_allclose(x_lemaire09, X.T, atol=1.0e-14)
+

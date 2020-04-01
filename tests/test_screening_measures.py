@@ -6,17 +6,27 @@ from numpy.testing import assert_allclose
 from hypermodern_screening.sampling_schemes import trajectory_sample
 from hypermodern_screening.sampling_schemes import radial_sample
 from hypermodern_screening.screening_measures import screening_measures
+from hypermodern_screening.screening_measures import compute_measures
 
+
+def test_compute_measures():
+    """Tests the normalization option by `(sd_x / sd_y)` of `compute_measures`."""
+    ee_i = np.array([1, 1]*3).reshape(3,2)
+
+    sd_x_2 = np.array([2, 2, 2])
+    
+    means_unit, _, _ = compute_measures(ee_i)
+    means_double, _, _ = compute_measures(ee_i, sd_x_2, sigma_norm=True)
+    
+    assert_array_equal(means_unit*2, means_double)
 
 def sobol_model(a, b, c, d, e, f, coeffs, *args):
     """
     Test function used in `test_screening_measures_trajectory_uncorrelated_g_function`.
-
     Notes
     -----
     Strongly nonlinear, nonmonotonic, and nonzero interactions.
     Analytic results for Sobol Indices.
-
     """
     input_pars = np.array([a, b, c, d, e, f])
 
@@ -33,11 +43,9 @@ def sobol_model(a, b, c, d, e, f, coeffs, *args):
 def test_screening_measures_trajectory_uncorrelated_g_function():
     """
     Tests the screening measures for six uncorrelated parameters.
-
     Data and results taken from pages 123 - 127 in [1]. The data is
     four trajectories and the results are the Elementary Effects, the absolute
     Elementary Effects and the SD of the Elementary Effects for six paramters.
-
     Notes
     -----
     -Many intermediate results are given as well. `screening_measures_trajectory` is able
@@ -51,12 +59,10 @@ def test_screening_measures_trajectory_uncorrelated_g_function():
     be recomputed for each trajectory because the the reordered trajectories with columns
     in order of the step addition are still composed of columns that represent different
     paramters.
-
     References
     ----------
     [1] Saltelli, A., M. Ratto, T. Andres, F. Campolongo, J. Cariboni, D. Gatelli, M. Saisana,
     and S. Tarantola (2008). Global Sensitivity Analysis: The Primer. John Wiley & Sons.
-
     """
     # Covariance matrix
     cov = np.zeros(36).reshape(6, 6)
@@ -150,27 +156,27 @@ def test_screening_measures_trajectory_uncorrelated_g_function():
 
     # Compute the uncorrependent Elementary Effects.
     # Since there is no correlation, they equal their abolute versions.
-    one_ee_uncorr, _, _, _, _, _ = screening_measures(
+    one_ee_uncorr, _ = screening_measures(
         wrapper_one, [traj_one], [steps_one], cov, mu, radial=False
     )
 
-    two_ee_uncorr, _, _, _, _, _ = screening_measures(
+    two_ee_uncorr, _ = screening_measures(
         wrapper_two, [traj_two], [steps_two], cov, mu, radial=False
     )
 
-    three_ee_uncorr, _, _, _, _, _ = screening_measures(
+    three_ee_uncorr, _ = screening_measures(
         wrapper_three, [traj_three], [steps_three], cov, mu, radial=False
     )
 
-    four_ee_uncorr, _, _, _, _, _ = screening_measures(
+    four_ee_uncorr, _ = screening_measures(
         wrapper_four, [traj_four], [steps_four], cov, mu, radial=False
     )
 
     # `argsort` inverses the transformation that uncorruced the stairs shape to the trajectories.
-    ee_one = np.array(one_ee_uncorr).reshape(6, 1)[np.argsort(idx_one)]
-    ee_two = np.array(two_ee_uncorr).reshape(6, 1)[np.argsort(idx_two)]
-    ee_three = np.array(three_ee_uncorr).reshape(6, 1)[np.argsort(idx_three)]
-    ee_four = np.array(four_ee_uncorr).reshape(6, 1)[np.argsort(idx_four)]
+    ee_one = np.array(one_ee_uncorr[0]).reshape(6, 1)[np.argsort(idx_one)]
+    ee_two = np.array(two_ee_uncorr[0]).reshape(6, 1)[np.argsort(idx_two)]
+    ee_three = np.array(three_ee_uncorr[0]).reshape(6, 1)[np.argsort(idx_three)]
+    ee_four = np.array(four_ee_uncorr[0]).reshape(6, 1)[np.argsort(idx_four)]
 
     ee_i = np.concatenate((ee_one, ee_two, ee_three, ee_four), axis=1)
 
@@ -200,16 +206,13 @@ def lin_portfolio(q1, q2, c1=2, c2=1, *args):
 def test_screening_measures_trajectory_uncorrelated_linear_function():
     """
     Test for a linear function with two paramters. Non-unit variance and EEs are coefficients.
-
     Results data taken from [1], page 335.
-
     Notes
     -----
     This test contains intuition for reasable results (including correlations) for the first
     two testcases in [2] that also use a linear function. The corresponding EE
     should be the coefficients plus the correlation times the coefficients of the correlated
     parameters.
-
     References
     ----------
     [1] Smith, R. C. (2014). Uncertainty Quantification: Theory, Implementation, and Applications.
@@ -217,7 +220,6 @@ def test_screening_measures_trajectory_uncorrelated_linear_function():
     [2] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
     sensitivityanalysis of models with dependent inputs. Reliability Engineering &
     System Safety 100 (162), 28–39.
-
     """
     cov = np.array([[1, 0], [0, 9]])
 
@@ -234,36 +236,29 @@ def test_screening_measures_trajectory_uncorrelated_linear_function():
         n_traj_sample, n_inputs, n_levels, seed, True, numeric_zero
     )
 
-    (
-        ee_uncorr,
-        ee_corr,
-        abs_ee_uncorr,
-        abs_ee_corr,
-        sd_ee_uncorr,
-        sd_ee_corr,
-    ) = screening_measures(lin_portfolio, traj_list, step_list, cov, mu, radial=False)
+    measures, _ = screening_measures(
+        lin_portfolio, traj_list, step_list, cov, mu, radial=False
+    )
 
     exp_ee = np.array([2, 1]).reshape(n_inputs, 1)
     exp_sd = np.array([0, 0]).reshape(n_inputs, 1)
 
-    assert_array_equal(exp_ee, ee_uncorr)
-    assert_array_equal(exp_ee, abs_ee_uncorr)
-    assert_array_equal(exp_ee, ee_corr)
-    assert_array_equal(exp_ee, abs_ee_corr)
-    assert_allclose(exp_sd, sd_ee_corr, atol=1.0e-15)
-    assert_allclose(exp_sd, sd_ee_corr, atol=1.0e-15)
+    assert_array_equal(exp_ee, measures[0])
+    assert_array_equal(exp_ee, measures[1])
+    assert_array_equal(exp_ee, measures[2])
+    assert_array_equal(exp_ee, measures[3])
+    assert_allclose(exp_sd, measures[4], atol=1.0e-15)
+    assert_allclose(exp_sd, measures[5], atol=1.0e-15)
 
 
 def linear_function(a, b, c, *args):
     """
     Function for Test Case 1 and 2 in [1].
-
     References
     ----------
     [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
     sensitivityanalysis of models with dependent inputs. Reliability Engineering &
     System Safety 100 (162), 28–39.
-
     """
     return a + b + c
 
@@ -273,13 +268,11 @@ def test_linear_model_equality_radial_trajectory():
     Tests whether `screening_measures` yields the same results for samples in radial
     and in trajectory design. This yields confidence in the radial option, as the
     trajectory option is already tested multiple times.
-
     Notes
     -----
     As the model is linear, both uncorrelated EEs should be equals to the coefficients
     and both correlated EEs should be equals to the sum of coefficients times the
     correlation betwen parameters.
-
     """
     mu = np.array([0, 0, 0])
 
@@ -294,46 +287,15 @@ def test_linear_model_equality_radial_trajectory():
     traj_list, traj_step_list = trajectory_sample(
         n_sample, n_inputs, n_levels, seed, False, numeric_zero
     )
-    (
-        t_ee_ind,
-        t_ee_full,
-        t_abs_ee_ind,
-        t_abs_ee_full,
-        t_sd_ee_ind,
-        t_sd_ee_full,
-    ) = screening_measures(
+    measures_list_traj, _ = screening_measures(
         linear_function, traj_list, traj_step_list, cov, mu, radial=False
     )
 
     # Generate radial samples and steps. Then computes measures.
-    rad_list, rad_step_list = radial_sample(n_sample, n_inputs, True, numeric_zero)
-    (
-        r_ee_ind,
-        r_ee_full,
-        r_abs_ee_ind,
-        r_abs_ee_full,
-        r_sd_ee_ind,
-        r_sd_ee_full,
-    ) = screening_measures(
+    rad_list, rad_step_list = radial_sample(n_sample, n_inputs, True)
+    measures_list_rad, _ = screening_measures(
         linear_function, rad_list, rad_step_list, cov, mu, radial=True
     )
 
-    # Compress results to lists
-    traj_results = [
-        t_ee_ind,
-        t_ee_full,
-        t_abs_ee_ind,
-        t_abs_ee_full,
-        t_sd_ee_ind,
-        t_sd_ee_full,
-    ]
-    rad_results = [
-        r_ee_ind,
-        r_ee_full,
-        r_abs_ee_ind,
-        r_abs_ee_full,
-        r_sd_ee_ind,
-        r_sd_ee_full,
-    ]
+    assert_allclose(measures_list_traj, measures_list_rad, atol=1.0e-13)
 
-    assert_allclose(traj_results, rad_results, atol=1.0e-13)

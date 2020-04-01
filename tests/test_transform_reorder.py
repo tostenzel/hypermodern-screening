@@ -24,7 +24,6 @@ def test_ee_uncorr_reorder_sample(traj):
     """
     Unit tests for `ee_uncorr_reorder_sample` and
     `reverse_ee_uncorr_reorder_sample`.
-
     """
     assert_array_equal(
         ee_uncorr_reorder_sample(traj),
@@ -52,7 +51,6 @@ def test_ee_corr_reorder_sample(traj):
     """
     Unit tests for `ee_corr_reorder_sample` and
     `reverse_ee_corr_reorder_sample`.
-
     """
     assert_array_equal(
         ee_corr_reorder_sample(traj),
@@ -121,3 +119,4 @@ def test_reorder_cov(cov):
     assert_array_equal(expected, reverse_reorder_cov(cov))
 
     assert_array_equal(cov, reverse_reorder_cov(reorder_cov(cov)))
+

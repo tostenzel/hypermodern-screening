@@ -9,7 +9,6 @@ from hypermodern_screening.transform_ee import trans_ee_uncorr
 def test_trans_ee_uncorr_trajectories():
     """
     Intregation test for `trans_ee_uncorr_trajectories`
-
     Notes
     -----
     -This test provides strong evidence that the whole transformation
@@ -22,17 +21,14 @@ def test_trans_ee_uncorr_trajectories():
     to these elements the step is added before the correlation transformation.
     -`ee_corr_trajectories`, however, is hard to test because there, all elements
     differ if there are correlations.
-
     See Also
     --------
     `trans_ee_uncorr_trajectories`.
-
     References
     ----------
     [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
     sensitivityanalysis of models with dependent inputs. Reliability Engineering &
     System Safety 100 (162), 28–39.
-
     """
     mu = np.array([10, 11, 12, 13, 14])
 

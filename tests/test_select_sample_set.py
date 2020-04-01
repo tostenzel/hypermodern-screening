@@ -1,6 +1,5 @@
 """
 Tests select_sample_sets.py.
-
 References
 ----------
 [1] Campolongo, F., J. Cariboni, and A. Saltelli (2007). An effective screening design for
@@ -9,8 +8,11 @@ sensitivity analysis of large models. Environmental modelling & software 22 (10)
 [2] Ge, Q. and M. Menendez (2014). An efficient sensitivity analysis approach for
 computationally expensive microscopic traffic simulation models. International Journal of
 Transportation 2 (2), 49–64.
-
 """
+import sys
+
+# Define parent folder as relative path.
+sys.path.append("..")
 
 import numpy as np
 import pytest
@@ -24,9 +26,7 @@ from hypermodern_screening.select_sample_set import combi_wrapper
 from hypermodern_screening.select_sample_set import select_trajectories
 from hypermodern_screening.select_sample_set import campolongo_2007
 from hypermodern_screening.select_sample_set import intermediate_ge_menendez_2014
-from hypermodern_screening.select_sample_set import (
-    select_trajectories_wrapper_iteration,
-)
+from hypermodern_screening.select_sample_set import select_trajectories_wrapper_iteration
 from hypermodern_screening.select_sample_set import total_distance
 from hypermodern_screening.select_sample_set import final_ge_menendez_2014
 
@@ -63,7 +63,6 @@ def test_select_trajectories_1():
     """
     Small unit test for `select_trajectories` by reducing the sample set by
     one sample. Tests only the combination that yields the maximal `total_distance`.
-
     """
     test_traj_dist_matrix = np.array(
         [[0, 1, 2, 4], [1, 0, 3, 100], [2, 3, 0, 200], [4, 100, 200, 0]]
@@ -129,7 +128,6 @@ def test_select_trajectories_iteration_1():
     """
     Small unit test for `select_trajectories_wrapper_iteration` by reducing
     the sample set by one sample.
-
     """
     dist_matrix = np.array([[0, 4, 5, 6], [4, 0, 7, 8], [5, 7, 0, 9], [6, 8, 9, 0]])
 
@@ -152,7 +150,6 @@ def test_select_trajectories_iteration_2():
     """
     Small unit test for `select_trajectories_wrapper_iteration` by reducing
     the sample set by one sample.
-
     """
     test_traj_dist_matrix = np.array(
         [[0, 1, 2, 4], [1, 0, 3, 100], [2, 3, 0, 200], [4, 100, 200, 0]]
@@ -193,7 +190,7 @@ def sample_traj_list(numbers):
 @pytest.fixture
 def traj_selection(sample_traj_list, numbers):
     """Fix sample set and distance matrix for the next four tests."""
-    select_list, select_distance_matrix = campolongo_2007(sample_traj_list, numbers[3])
+    select_list, select_distance_matrix, _ = campolongo_2007(sample_traj_list, numbers[3])
 
     return [select_list, select_distance_matrix]
 
@@ -203,9 +200,8 @@ def test_compare_camp_07_int_ge_men_14_2(numbers, sample_traj_list, traj_selecti
     Tests wether the trajectory set computed by compolongo_2007
     and intermediate_ge_menendez_2014 are reasonably close in terms
     of their total distance.
-
     """
-    select_list_2, select_distance_matrix_2 = intermediate_ge_menendez_2014(
+    select_list_2, select_distance_matrix_2, _ = intermediate_ge_menendez_2014(
         sample_traj_list, numbers[3]
     )
 
@@ -221,13 +217,11 @@ def test_compare_camp_07_final_ge_men_14_2(numbers, sample_traj_list, traj_selec
     Tests wether the trajectory set computed by compolongo_2007
     and final_ge_menendez_2014 are reasonably close in terms
     of their total distance.
-
     Notes
     -----
     Very few times, the difference gets relatively large, see assert statement.
-
     """
-    select_list_2, select_distance_matrix_2 = final_ge_menendez_2014(
+    select_list_2, select_distance_matrix_2, _ = final_ge_menendez_2014(
         sample_traj_list, numbers[3]
     )
 
@@ -249,9 +243,8 @@ def test_compare_camp_07_int_ge_men_14_1(numbers, sample_traj_list, traj_selecti
     """
     Tests wether the sample set and distance matrix of the [1] and the first part
     of the improvment in [2] are identical.
-
     """
-    select_list_2, select_distance_matrix_2 = intermediate_ge_menendez_2014(
+    select_list_2, select_distance_matrix_2, _ = intermediate_ge_menendez_2014(
         sample_traj_list, numbers[3]
     )
     selection = traj_selection
@@ -270,14 +263,14 @@ def test_compare_camp_07_final_ge_men_14_1(numbers, sample_traj_list, traj_selec
     """
     Tests wether the sample set and distance matrix of the [1] and the both parts
     of the improvment in [2] are identical.
-
     """
-    traj_list, diagonal_dist_matrix = final_ge_menendez_2014(
+    traj_list, diagonal_dist_matrix, _ = final_ge_menendez_2014(
         sample_traj_list, numbers[3]
     )
-    test_list, test_diagonal_dist_matrix = intermediate_ge_menendez_2014(
+    test_list, test_diagonal_dist_matrix, _ = intermediate_ge_menendez_2014(
         sample_traj_list, numbers[3]
     )
 
     assert_array_equal(traj_list, test_list)
     assert_array_equal(diagonal_dist_matrix, test_diagonal_dist_matrix)
+
