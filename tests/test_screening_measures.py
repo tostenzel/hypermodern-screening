@@ -1,39 +1,55 @@
+"""Tests for module `screening_measures.py`."""
+
 import numpy as np
+from numpy.testing import assert_allclose, assert_array_equal
 
-from numpy.testing import assert_array_equal
-from numpy.testing import assert_allclose
-
-from hypermodern_screening.sampling_schemes import trajectory_sample
-from hypermodern_screening.sampling_schemes import radial_sample
-from hypermodern_screening.screening_measures import screening_measures
-from hypermodern_screening.screening_measures import compute_measures
+from hypermodern_screening.sampling_schemes import radial_sample, trajectory_sample
+from hypermodern_screening.screening_measures import (
+    compute_measures,
+    screening_measures,
+)
 
 
 def test_compute_measures() -> None:
     """Tests the normalization option by `(sd_x / sd_y)` of `compute_measures`."""
-    ee_i = np.array([1, 1]*3).reshape(3,2)
+    ee_i = np.array([1, 1] * 3).reshape(3, 2)
 
     sd_x_2 = np.array([2, 2, 2])
-    
+
     means_unit, _, _ = compute_measures(ee_i)
     means_double, _, _ = compute_measures(ee_i, sd_x_2, sigma_norm=True)
-    
-    assert_array_equal(means_unit*2, means_double)
 
-def sobol_model(a, b, c, d, e, f, coeffs, *args):
-    """
-    Test function used in `test_screening_measures_trajectory_uncorrelated_g_function`.
+    assert_array_equal(means_unit * 2, means_double)
+
+
+def sobol_model(
+    a: float,
+    b: float,
+    c: float,
+    d: float,
+    e: float,
+    f: float,
+    coeffs: np.ndarray,
+    *args: float,
+) -> float:
+    """Test function with analytical solutions.
+
     Notes
     -----
     Strongly nonlinear, nonmonotonic, and nonzero interactions.
     Analytic results for Sobol Indices.
+
+    See Also
+    --------
+    `test_screening_measures_trajectory_uncorrelated_g_function`
+
     """
     input_pars = np.array([a, b, c, d, e, f])
 
-    def g_i(input_pars, coeffs):
+    def g_i(input_pars: np.ndarray, coeffs: np.ndarray) -> float:
         return (abs(4 * input_pars - 2) + coeffs) / (1 + coeffs)
 
-    y = 1
+    y = float(1)
     for i in range(0, len(input_pars)):
         y *= g_i(input_pars[i], coeffs[i])
 
@@ -43,26 +59,31 @@ def sobol_model(a, b, c, d, e, f, coeffs, *args):
 def test_screening_measures_trajectory_uncorrelated_g_function() -> None:
     """
     Tests the screening measures for six uncorrelated parameters.
+
     Data and results taken from pages 123 - 127 in [1]. The data is
     four trajectories and the results are the Elementary Effects, the absolute
     Elementary Effects and the SD of the Elementary Effects for six paramters.
+
     Notes
     -----
-    -Many intermediate results are given as well. `screening_measures_trajectory` is able
-    to compute all of them precisely.
-    -The function uses a lot of reorderings. The reason is that `screening_measures_trajectory`
-    assumes that the first columns has the first step addition etc. This facilitates
-    the necessary transformations to account for correlations. In this example
-    the order of the paramters to which the step is added is different for each
-    trajectory. To account for this discrepancy in trajectory format, the trajectories
-    and `sobol_model` have to be changed accordingly. Additionally, the effects have to
-    be recomputed for each trajectory because the the reordered trajectories with columns
-    in order of the step addition are still composed of columns that represent different
-    paramters.
+    -Many intermediate results are given as well. `screening_measures_trajectory` is
+    able to compute all of them precisely.
+    -The function uses a lot of reorderings. The reason is that
+    `screening_measures_trajectory` assumes that the first columns has the first step
+    addition etc. This facilitates the necessary transformations to account for
+    correlations. In this example the order of the paramters to which the step is added
+    is different for each trajectory. To account for this discrepancy in trajectory
+    format, the trajectories and `sobol_model` have to be changed accordingly.
+    Additionally, the effects have to be recomputed for each trajectory because the
+    reordered trajectories with columns in order of the step addition are still
+    composed of columns that represent different paramters.
+
     References
     ----------
-    [1] Saltelli, A., M. Ratto, T. Andres, F. Campolongo, J. Cariboni, D. Gatelli, M. Saisana,
-    and S. Tarantola (2008). Global Sensitivity Analysis: The Primer. John Wiley & Sons.
+    [1] Saltelli, A., M. Ratto, T. Andres, F. Campolongo, J. Cariboni, D. Gatelli,
+    M. Saisana, and S. Tarantola (2008). Global Sensitivity Analysis: The Primer.
+    John Wiley & Sons.
+
     """
     # Covariance matrix
     cov = np.zeros(36).reshape(6, 6)
@@ -124,7 +145,7 @@ def test_screening_measures_trajectory_uncorrelated_g_function() -> None:
     idx_four = [5, 2, 3, 4, 1, 0]
 
     # Create stairs shape:
-    # Transform trajectories so that the the step is first added to the frist columns etc.
+    # Transform trajectories so that the the step is first added to frist columns etc.
     traj_one = traj_one[:, idx_one]
     traj_two = traj_two[:, idx_two]
     traj_three = traj_three[:, idx_three]
@@ -134,16 +155,48 @@ def test_screening_measures_trajectory_uncorrelated_g_function() -> None:
 
     # Define wrappers around `sobol_model` to account for different coeffient order
     # due to the column shuffling. Argument order changes.
-    def wrapper_one(a, b, c, d, e, f, coeffs=coeffs[idx_one]):
+    def wrapper_one(
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        e: float,
+        f: float,
+        coeffs: np.ndarray = coeffs[idx_one],
+    ) -> float:
         return sobol_model(f, b, a, d, c, e, coeffs[idx_one])
 
-    def wrapper_two(a, b, c, d, e, f, coeffs=coeffs[idx_two]):
+    def wrapper_two(
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        e: float,
+        f: float,
+        coeffs: np.ndarray = coeffs[idx_two],
+    ) -> float:
         return sobol_model(b, c, a, f, e, d, coeffs[idx_two])
 
-    def wrapper_three(a, b, c, d, e, f, coeffs=coeffs[idx_three]):
+    def wrapper_three(
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        e: float,
+        f: float,
+        coeffs: np.ndarray = coeffs[idx_three],
+    ) -> float:
         return sobol_model(d, a, e, b, c, f, coeffs[idx_three])
 
-    def wrapper_four(a, b, c, d, e, f, coeffs=coeffs[idx_four]):
+    def wrapper_four(
+        a: float,
+        b: float,
+        c: float,
+        d: float,
+        e: float,
+        f: float,
+        coeffs: np.ndarray = coeffs[idx_four],
+    ) -> float:
         return sobol_model(f, c, d, e, b, a, coeffs[idx_four])
 
     # Compute step sizes because rows are also randomly shuffeled.
@@ -172,7 +225,8 @@ def test_screening_measures_trajectory_uncorrelated_g_function() -> None:
         wrapper_four, [traj_four], [steps_four], cov, mu, radial=False
     )
 
-    # `argsort` inverses the transformation that uncorruced the stairs shape to the trajectories.
+    # `argsort` inverses the transformation that uncorruced the stairs shape
+    # to the trajectories.
     ee_one = np.array(one_ee_uncorr[0]).reshape(6, 1)[np.argsort(idx_one)]
     ee_two = np.array(two_ee_uncorr[0]).reshape(6, 1)[np.argsort(idx_two)]
     ee_three = np.array(three_ee_uncorr[0]).reshape(6, 1)[np.argsort(idx_three)]
@@ -198,28 +252,34 @@ def test_screening_measures_trajectory_uncorrelated_g_function() -> None:
     assert_array_equal(np.round(sd_ee, 3), expected_sd_ee, 3)
 
 
-def lin_portfolio(q1, q2, c1=2, c2=1, *args):
-    """Simple linear function with analytic EE solution for the next test."""
+def lin_portfolio(
+    q1: float, q2: float, c1: float = 2, c2: float = 1, *args: float
+) -> float:
+    """Linear function with analytic EE solution for the next test."""
     return c1 * q1 + c2 * q2
 
 
 def test_screening_measures_trajectory_uncorrelated_linear_function() -> None:
     """
-    Test for a linear function with two paramters. Non-unit variance and EEs are coefficients.
-    Results data taken from [1], page 335.
+    Test for a linear function with two paramters.
+
+    Non-unit variance and EEs are coefficients. Results data taken from [1], page 335.
+
     Notes
     -----
-    This test contains intuition for reasable results (including correlations) for the first
-    two testcases in [2] that also use a linear function. The corresponding EE
-    should be the coefficients plus the correlation times the coefficients of the correlated
-    parameters.
+    This test contains intuition for reasable results (including correlations) for
+    the first two testcases in [2] that also use a linear function. The corresponding
+    EE should be the coefficients plus the correlation times the coefficients of the
+    correlated parameters.
+
     References
     ----------
-    [1] Smith, R. C. (2014). Uncertainty Quantification: Theory, Implementation, and Applications.
-    Philadelphia: SIAM-Society for Industrial and Applied Mathematics.
+    [1] Smith, R. C. (2014). Uncertainty Quantification: Theory, Implementation, and
+    Applications. Philadelphia: SIAM-Society for Industrial and Applied Mathematics.
     [2] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
     sensitivityanalysis of models with dependent inputs. Reliability Engineering &
     System Safety 100 (162), 28–39.
+
     """
     cov = np.array([[1, 0], [0, 9]])
 
@@ -251,28 +311,33 @@ def test_screening_measures_trajectory_uncorrelated_linear_function() -> None:
     assert_allclose(exp_sd, measures[5], atol=1.0e-15)
 
 
-def linear_function(a, b, c, *args):
-    """
-    Function for Test Case 1 and 2 in [1].
+def linear_function(a: float, b: float, c: float, *args: float) -> float:
+    """Additive function for Test Case 1 and 2 in [1].
+
     References
     ----------
     [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
     sensitivityanalysis of models with dependent inputs. Reliability Engineering &
     System Safety 100 (162), 28–39.
+
     """
     return a + b + c
 
 
 def test_linear_model_equality_radial_trajectory() -> None:
     """
+    Measures for linear model computed by radial and traj. design are equal.
+
     Tests whether `screening_measures` yields the same results for samples in radial
     and in trajectory design. This yields confidence in the radial option, as the
     trajectory option is already tested multiple times.
+
     Notes
     -----
     As the model is linear, both uncorrelated EEs should be equals to the coefficients
     and both correlated EEs should be equals to the sum of coefficients times the
     correlation betwen parameters.
+
     """
     mu = np.array([0, 0, 0])
 
@@ -298,4 +363,3 @@ def test_linear_model_equality_radial_trajectory() -> None:
     )
 
     assert_allclose(measures_list_traj, measures_list_rad, atol=1.0e-13)
-

@@ -1,12 +1,16 @@
+"""Tests for module `transform_distributions.py`."""
+
+
 import numpy as np
 from numpy.testing import assert_allclose
 
-from hypermodern_screening.transform_distributions import covariance_to_correlation
-from hypermodern_screening.transform_distributions import transform_uniform_stnormal_uncorr
-from hypermodern_screening.transform_distributions import transform_stnormal_normal_corr
-
-from tests.resources.nataf_transformation import nataf_transformation
-from tests.resources.distributions import distributions
+from hypermodern_screening.transform_distributions import (
+    covariance_to_correlation,
+    transform_stnormal_normal_corr,
+    transform_uniform_stnormal_uncorr,
+)
+from tests.resources.distributions import distributions  # type: ignore
+from tests.resources.nataf_transformation import nataf_transformation  # type: ignore
 
 
 def test_covariance_to_correlation() -> None:
@@ -20,13 +24,21 @@ def test_covariance_to_correlation() -> None:
 
 def test_transform_stnormal_normal_corr() -> None:
     """
+    Test the inverse transform sampling from normal distribution.
+
     Compares the implementation of the inverse Rosenblatt/inverse Nataf transformation
     for normally distributed deviates with the implementation [1] for several
     distributions by TUM Department of Civil, Geo and Environmental Engineering
     Technical University of Munich.
+
     References
     ----------
     [1] https://www.bgu.tum.de/en/era/software/eradist/.
+
+    See Also
+    --------
+    `transform_uniform_stnormal_uncorr` and `transform_stnormal_normal_corr`.
+
     """
     # Expectation values.
     mu = np.array([10, 10, 10, 10, 10])
@@ -64,4 +76,3 @@ def test_transform_stnormal_normal_corr() -> None:
     X = T_Nataf.U2X(z)
 
     assert_allclose(x_lemaire09, X.T, atol=1.0e-14)
-

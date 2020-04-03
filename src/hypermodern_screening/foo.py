@@ -1,17 +1,18 @@
+"""Show that packaging works."""
+
 import numpy as np
 
 from hypermodern_screening.sampling_schemes import radial_sample
 from hypermodern_screening.screening_measures import screening_measures
 
-"""Example from Ge/Menendez (2017)"""
 
-
-def linear_function(a, b, c, *args):
+def linear_function(a: float, b: float, c: float, *args: float) -> float:
+    """Compute example function from Ge/Menendez (2017)."""
     return a + b + c
 
 
-def main():
-
+def main() -> None:
+    """Print correlated EEs for `linear function`."""
     mu = np.array([0, 0, 0])
 
     cov = np.array([[1.0, 0.9, 0.4], [0.9, 1.0, 0.01], [0.4, 0.01, 1.0]])
@@ -19,8 +20,6 @@ def main():
     n_sample = 10_0
 
     # Trajectory-specific paramters.
-    seed = 2020
-    n_levels = 10
     n_inputs = 3
 
     traj_list, step_list = radial_sample(n_sample, n_inputs, normal=True)
@@ -28,6 +27,5 @@ def main():
     measures_list, _ = screening_measures(
         linear_function, traj_list, step_list, cov, mu, radial=True
     )
-
 
     print(measures_list[1], "test")

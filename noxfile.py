@@ -1,5 +1,5 @@
 """Nox sessions."""
-import subprocess
+import os
 import tempfile
 from typing import Any
 
@@ -11,13 +11,7 @@ nox.options.sessions = "lint", "mypy", "pytype", "safety", "tests"
 locations = "src", "tests", "noxfile.py", "docs/conf.py"
 
 
-def install(name: str) -> None:
-    """Install a python package via pip."""
-    subprocess.call(["pip", "install", name])
-
-
-# Install `poetry`. Appearantly required by my system in contrary to guide.
-install("poetry")
+os.system("pip install poetry")
 
 
 def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> None:
@@ -30,11 +24,14 @@ def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> Non
     versions specified in poetry.lock. This allows you to manage the
     packages as Poetry development dependencies.
 
-    Arguments:
+    Parameters
     ----------
-        session: The Session object.
-        args: Command-line arguments for pip.
-        kwargs: Additional keyword arguments for Session.install.
+    session
+        The Session object.
+    args
+        Command-line arguments for pip.
+    kwargs
+        Additional keyword arguments for Session.install.
 
     """
     with tempfile.NamedTemporaryFile() as requirements:
@@ -70,7 +67,7 @@ def lint(session: Session) -> None:
         "flake8-bugbear",
         "flake8-docstrings",
         "flake8-import-order",
-        "darglint"
+        "darglint",
     )
     session.run("flake8", *args)
 
@@ -151,5 +148,3 @@ def coverage(session: Session) -> None:
     install_with_constraints(session, "coverage[toml]", "codecov")
     session.run("coverage", "xml", "--fail-under=0")
     session.run("codecov", *session.posargs)
-
-

@@ -1,59 +1,71 @@
 """
+Compute the component for the redesigned EE expressions.
+
 Functions to compute the arguments for the function evaluations in the numerator
 of the individual uncorrelated and correlated Elementary Effects following [1],
 page 33 and 34, and coefficients that scale the step.
 These functions can handle samples in both, trajectory and radial, designs.
+
 References
 ----------
 [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
 sensitivity analysis of models with dependent inputs. Reliability Engineering &
 System Safety 100 (162), 28–39.
+
 """
 from typing import List, Tuple, Union
+
 import numpy as np
+
 from hypermodern_screening.transform_distributions import transform_stnormal_normal_corr
-from hypermodern_screening.transform_reorder import ee_corr_reorder_sample
-from hypermodern_screening.transform_reorder import ee_uncorr_reorder_sample
-from hypermodern_screening.transform_reorder import reorder_cov
-from hypermodern_screening.transform_reorder import reorder_mu
-from hypermodern_screening.transform_reorder import reverse_ee_corr_reorder_sample
-from hypermodern_screening.transform_reorder import reverse_ee_uncorr_reorder_sample
-from hypermodern_screening.transform_reorder import reverse_reorder_cov
-from hypermodern_screening.transform_reorder import reverse_reorder_mu
+from hypermodern_screening.transform_reorder import (
+    ee_corr_reorder_sample,
+    ee_uncorr_reorder_sample,
+    reorder_cov,
+    reorder_mu,
+    reverse_ee_corr_reorder_sample,
+    reverse_ee_uncorr_reorder_sample,
+    reverse_reorder_cov,
+    reverse_reorder_mu,
+)
 
 
 def trans_ee_uncorr(
-    sample_list: List, cov: np.ndarray, mu: np.ndarray, radial: bool=False
-    ) -> Tuple[List, List, List]:
-    """
-    Transforms list of samples to two lists of transformed samples
-    for the computation of the uncorrelated Elementary Effects.
+    sample_list: List[np.ndarray], cov: np.ndarray, mu: np.ndarray, radial: bool = False
+) -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]:
+    """Transform list of samples to two lists of transformed samples.
+
+    (For the computation of the uncorrelated Elementary Effects.)
+
     Parameters
     ----------
-    sample_list : list of ndarrays
+    sample_list
         Set of untransformed samples.
     cov : np.ndarray
         Covariance matrix.
-    mu : np.ndarray
+    mu
         Expectation value.
-    radial : bool
+    radial
         Sample is in trajectory or radial design.
+
     Returns
     -------
-    trans_piplusone_i : list of ndarrays
+    trans_piplusone_i
         samples containing the rows that are the arguments for the LHS function
         evaluation for the uncorrelated Elementary Effect.
-    trans_pi_i : list of ndarrays
+    trans_pi_i
         samples containing the rows that are the arguments for the RHS function
         evaluation for the uncorrelated Elementary Effect.
-    coeff_step : list of ndarrays
+    coeff_step
         Factors in the denumerator of the uncorrelated Elementary Effect. Accounts
         for the decorrelation of the Step.
+
     Raises
     ------
     AssertionError
         If the dimension of `mu`, `cov` and the elements in `sample_list`
         do not fit together.
+
     Notes
     -----
     The rows in the two different transformed samples equal to T(p_{i+1}, i)
@@ -66,8 +78,9 @@ def trans_ee_uncorr(
     T(p_{i}, i). Therefore, importantly, one needs to compare each row in a sample from
     `trans_pi_i` with the respective row one below in `trans_piplusone_i`.
     To compute the EEs from radial samples, the arguments of the subtracted function
-    are the first row of the sample. Yet, they must be reordered and transformed according
-    to their order, too.
+    are the first row of the sample. Yet, they must be reordered and transformed
+    according to their order, too.
+
     """
     assert len(mu) == len(cov) == np.size(sample_list[0], 1)
 
@@ -147,31 +160,35 @@ def trans_ee_uncorr(
 
 
 def trans_ee_corr(
-    sample_list: List, cov: np.ndarray, mu: np.ndarray, radial: bool=False
-    ) -> Tuple[List, Union[List, None]]:
-    """
-    Transforms list of samples to two lists of transformed samples
-    for the computation of the correlated Elementary Effects.
+    sample_list: List, cov: np.ndarray, mu: np.ndarray, radial: bool = False
+) -> Tuple[List, Union[List, None]]:
+    """Transform list of samples to two lists of transformed samples.
+
+    (For the computation of the correlated Elementary Effects.)
+
     Parameters
     ----------
-    sample_list : list of ndarrays
+    sample_list
         Set of untransformed samples.
-    cov : ndarray
+    cov
         Covariance matrix.
-    mu : ndarray
+    mu
         Expectation value.
-    radial : bool
+    radial
         Sample is in trajectory or radial design.
+
     Returns
     -------
-    trans_piplusone_iminusone : list of ndarrays
+    trans_piplusone_iminusone
         samples containing the rows that are the arguments for the LHS function
         evaluation for the correlated Elementary Effect.
+
     Raises
     ------
     AssertionError
         If the dimension of `mu`, `cov` and the elements in `sample_list`
         do not fit together.
+
     Notes
     -----
     For the trajectory design, the transformation for the rows on the RHS of the
@@ -179,11 +196,13 @@ def trans_ee_corr(
     Elementary Effects. Therefore, if `radial is False`, this transformation is skipped
     and left to `trans_ee_uncorr_samples`.
     To compute the EEs from radial samples, the arguments of the subtracted function
-    are the first row of the sample. Yet, they must be reordered and transformed according
-    to their order, too.
+    are the first row of the sample. Yet, they must be reordered and transformed
+    according to their order, too.
+
     See Also
     --------
     trans_ee_uncorr_samples
+
     """
     assert len(mu) == len(cov) == np.size(sample_list[0], 1)
 

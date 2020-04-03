@@ -1,5 +1,6 @@
-import numpy as np
+"""Tests for module `transform_ee.py`."""
 
+import numpy as np
 from numpy.testing import assert_array_equal
 
 from hypermodern_screening.sampling_schemes import trajectory_sample
@@ -8,7 +9,8 @@ from hypermodern_screening.transform_ee import trans_ee_uncorr
 
 def test_trans_ee_uncorr_trajectories() -> None:
     """
-    Intregation test for `trans_ee_uncorr_trajectories`
+    Integration test for `trans_ee_uncorr` for trajetory design.
+
     Notes
     -----
     -This test provides strong evidence that the whole transformation
@@ -21,9 +23,11 @@ def test_trans_ee_uncorr_trajectories() -> None:
     to these elements the step is added before the correlation transformation.
     -`ee_corr_trajectories`, however, is hard to test because there, all elements
     differ if there are correlations.
+
     See Also
     --------
-    `trans_ee_uncorr_trajectories`.
+    `trans_ee_uncorr`.
+
     References
     ----------
     [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global

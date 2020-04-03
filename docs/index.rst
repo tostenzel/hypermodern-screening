@@ -7,6 +7,7 @@ The Hypermodern Screening Project
    :maxdepth: 1
 
    license
+   reference
 
 
 Fill out.

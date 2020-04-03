@@ -1,5 +1,5 @@
-"""
-Functions for reordering the sample rows following [1].
+"""Functions for reordering the sample rows following [1].
+
 The intuition behind the reordering in general is the following: To compute the
 uncorrelated Elementary Effects, one moves the sampled elements that have been changed
 by `step` to the back of the row. For the correlated EE, one leaves the newly changed
@@ -14,30 +14,36 @@ The opposite is true for the uncorrelated EE.
 The above procedure is dervied from the ordering in trajectory samples. It also works
 for the radial design.
 Other functions order the expectations and covariance matrix accordingly. They are also
-used to initialize the correlating loops in the two functions in `transform_ee.py` in the
-right order.
+used to initialize the correlating loops in the two functions in `transform_ee.py` in
+the right order.
+
 References
 ----------
 [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
 sensitivityanalysis of models with dependent inputs. Reliability Engineering &
 System Safety 100 (162), 28–39.
+
 """
 import numpy as np
 
 
-def ee_uncorr_reorder_sample(sample: np.ndarray, row_plus_one: bool=True) -> np.ndarray:
-    """
-    For each row i (non-pythonic), move the first i elements to the back.
+def ee_uncorr_reorder_sample(
+    sample: np.ndarray, row_plus_one: bool = True
+) -> np.ndarray:
+    """For each row i (non-pythonic), move the first i elements to the back.
+
     Parameters
     ----------
-    sample : ndarray
+    sample
         sample.
-    row_plus_one : bool
+    row_plus_one
         Add 1 to row index, i.e. start with second row.
+
     Returns
     -------
-    sample_reordered : ndarray
+    sample_reordered
         Reordered sample.
+
     """
     sample_reordered = np.ones([np.size(sample, 0), np.size(sample, 1)]) * np.nan
 
@@ -59,18 +65,20 @@ def ee_uncorr_reorder_sample(sample: np.ndarray, row_plus_one: bool=True) -> np.
 
 
 def reverse_ee_uncorr_reorder_sample(
-    sample_reordered: np.ndarray, row_plus_one: bool=True
-    ) -> np.ndarray:
-    """
-    Reverse of function `uncorr_reorder_sample`.
+    sample_reordered: np.ndarray, row_plus_one: bool = True
+) -> np.ndarray:
+    """Reverse of function `uncorr_reorder_sample`.
+
     Parameters
     ----------
     sample_reordered : ndarray
         Reordered sample.
+
     Returns
     -------
     sample : ndarray
         Trjectory in original order.
+
     """
     sample = (
         np.ones([np.size(sample_reordered, 0), np.size(sample_reordered, 1)]) * np.nan
@@ -92,21 +100,23 @@ def reverse_ee_uncorr_reorder_sample(
 
 
 def ee_corr_reorder_sample(sample: np.ndarray) -> np.ndarray:
-    """
-    For each row i (non-pythonic), move the first i-1 elements to the back.
+    """For each row i (non-pythonic), move the first i-1 elements to the back.
+
     Parameters
     ----------
-    sample : ndarray
+    sample
         sample.
 
     Returns
     -------
-    sample_reordered : ndarray
+    sample_reordered
         Reordered sample.
+
     Notes
     -----
     There is no `row_plus_one=False` option because this is equivalent
     with `uncorr_reorder_sample(sample, row_plus_one=True)`.
+
     """
     sample_reordered = np.ones([np.size(sample, 0), np.size(sample, 1)]) * np.nan
 
@@ -120,18 +130,18 @@ def ee_corr_reorder_sample(sample: np.ndarray) -> np.ndarray:
 
 
 def reverse_ee_corr_reorder_sample(sample_reordered: np.ndarray) -> np.ndarray:
-    """
-    Reverse of function `corr_reorder_sample`.
+    """Reverse of function `corr_reorder_sample`.
 
     Parameters
     ----------
-    sample_reordered : ndarray
+    sample_reordered
         Reordered sample.
 
     Returns
     -------
-    sample : ndarray
+    sample
         Trjectory in original order.
+
     """
     sample = (
         np.ones([np.size(sample_reordered, 0), np.size(sample_reordered, 1)]) * np.nan
@@ -146,18 +156,18 @@ def reverse_ee_corr_reorder_sample(sample_reordered: np.ndarray) -> np.ndarray:
 
 
 def reorder_mu(mu: np.ndarray) -> np.ndarray:
-    """
-    Move the first element of the expectation vector to the end.
+    """Move the first element of the expectation vector to the end.
 
     Parameters
     ----------
-    mu : ndarray
+    mu
         Expectation values of row.
 
     Returns
     -------
-    mu_reordered : ndarray
+    mu_reordered
         Reordered expectation values of row.
+
     """
     mu_reordered = np.roll(mu, -1)
 
@@ -165,17 +175,20 @@ def reorder_mu(mu: np.ndarray) -> np.ndarray:
 
 
 def reorder_cov(cov: np.ndarray) -> np.ndarray:
-    """
-    Arrange covariance matrix according to the expectation vector when
-    the first element is moved to the end.
+    """Arrange covariance matrix according to the expectation vector.
+
+    (When the first element is moved to the end.)
+
     Parameters
     ----------
-    cov : ndarray
+    cov
         Covariance matrix of row.
+
     Returns
     -------
-    cov_reordered : ndarray
+    cov_reordered
         Reordered covariance matrix of row.
+
     """
     cov_reordered = np.ones(cov.shape) * np.nan
 
@@ -193,16 +206,18 @@ def reorder_cov(cov: np.ndarray) -> np.ndarray:
 
 
 def reverse_reorder_mu(mu_reordered: np.ndarray) -> np.ndarray:
-    """
-    Reverse of function `reorder_mu`.
+    """Reverse of function `reorder_mu`.
+
     Parameters
     ----------
-    mu_reordered : ndarray
+    mu_reordered
         Reordered expectation values of row.
+
     Returns
     -------
-    mu : ndarray
+    mu
         Expectation values of row in original order.
+
     """
     mu = np.roll(mu_reordered, +1)
 
@@ -212,14 +227,17 @@ def reverse_reorder_mu(mu_reordered: np.ndarray) -> np.ndarray:
 def reverse_reorder_cov(cov_reordered: np.ndarray) -> np.ndarray:
     """
     Reverse of function `reorder_cov`.
+
     Parameters
     ----------
     cov_reordered : ndarray
         Reordered covariance matrix.
+
     Returns
     -------
     cov : ndarray
         Covarince matrix in original order.
+
     """
     cov = np.ones(cov_reordered.shape) * np.nan
 
@@ -236,4 +254,3 @@ def reverse_reorder_cov(cov_reordered: np.ndarray) -> np.ndarray:
     ]
 
     return cov
-

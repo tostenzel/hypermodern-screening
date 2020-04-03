@@ -1,51 +1,61 @@
-"""
-Functions that decrease a set of sample sets in order to increase its
-representativeness. These are developed in the context of the trajectory design because
+"""Decrease a set of sample sets in order to increase its representativeness.
+
+These approaches are developed in the context of the trajectory design because
 it can not cover the space very densely.
 The methods are taken from the effective screening design in [1] and the
-efficient screening design in [2]
+efficient screening design in [2].
+
 References
 ----------
-[1] Campolongo, F., J. Cariboni, and A. Saltelli (2007). An effective screening design for
-sensitivity analysis of large models. Environmental modelling & software 22 (10), 1509–
-1518.
+[1] Campolongo, F., J. Cariboni, and A. Saltelli (2007). An effective screening design
+for sensitivity analysis of large models. Environmental modelling & software 22 (10),
+1509–1518.
 [2] Ge, Q. and M. Menendez (2014). An efficient sensitivity analysis approach for
-computationally expensive microscopic traffic simulation models. International Journal of
-Transportation 2 (2), 49–64.
+computationally expensive microscopic traffic simulation models. International Journal
+of Transportation 2 (2), 49–64.
+
 """
-from typing import Iterable, List, Tuple
 from itertools import combinations
+from typing import Iterable, List, Tuple
 
 import numpy as np
 from scipy.special import binom
-from hypermodern_screening.transform_distributions import transform_uniform_stnormal_uncorr
+
+from hypermodern_screening.transform_distributions import (
+    transform_uniform_stnormal_uncorr,
+)
 
 
 def compute_pair_distance(sample_0: np.ndarray, sample_1: np.ndarray) -> float:
-    """
-    Computes the distance measure between a pair of samples.
+    """Compute the distance measure between a pair of samples.
+
     The aggregate distance between sum of the root of the square distance between each
     parameter vector of one sample to each vector of the other sample.
+
     Parameters
     ----------
-    sample_0 : ndarray
+    sample_0
         Sample with paramters in cols and draws as rows.
-    sample_1 : ndarray
+    sample_1
         Sample with paramters in cols and draws as rows.
+
     Returns
     -------
-    distance : float
+    distance
         Pair distance.
+
     Raises
     ------
     AssertionError
         If sample is not in trajectory or radial design shape.
     AssertionError
         If the sample shapes differ.
+
     Notes
     -----
     The distance between two samples is sum of the root of the square distance between
     each parameter vector of one sample to each vector of the other sample.
+
     """
     distance = 0
     assert np.size(sample_0, 0) == np.size(sample_0, 1) + 1
@@ -61,17 +71,19 @@ def compute_pair_distance(sample_0: np.ndarray, sample_1: np.ndarray) -> float:
     return distance
 
 
-def distance_matrix(sample_list: List) -> np.ndarray:
-    """
-    Computes symmetric matrix of pair distances for a list of samples.
+def distance_matrix(sample_list: List[np.ndarray]) -> np.ndarray:
+    """Compute symmetric matrix of pair distances for a list of samples.
+
     Parameters
     ----------
-    sample_list : list of ndarrays
+    sample_list
         Set of samples.
+
     Returns
     -------
-    distance_matrix : ndarry
+    distance_matrix
         Symmatric matrix of pair distances.
+
     """
     distance_matrix = np.nan * np.ones(shape=(len(sample_list), len(sample_list)))
     for i in range(0, len(sample_list)):
@@ -79,21 +91,24 @@ def distance_matrix(sample_list: List) -> np.ndarray:
             distance_matrix[i, j] = compute_pair_distance(
                 sample_list[i], sample_list[j]
             )
+
     return distance_matrix
 
 
-def combi_wrapper(iterable: Iterable, r: int) -> List:
-    """
-    Wrapper around `itertools.combinations`, written in C, see [1].
+def combi_wrapper(iterable: Iterable, r: int) -> List[List]:
+    """Wrap `itertools.combinations`, written in C, see [1].
+
     Parameters
     ----------
     iterable : iterable object
         Hashable container like a list of distinct elements to combine.
+
     r : int
         Number to draw from `iterable` with putting back and regarding the order.
+
     Returns
     -------
-    list_list : list of lists
+    list_list
         All possible combinations in ascending order.
 
     Example
@@ -104,6 +119,7 @@ def combi_wrapper(iterable: Iterable, r: int) -> List:
     References
     ----------
     [1] https://docs.python.org/2/library/itertools.html#itertools.combinations.
+
     """
     tup_tup = combinations(iterable, r)
     list_list = [list(x) for x in tup_tup]
@@ -112,33 +128,39 @@ def combi_wrapper(iterable: Iterable, r: int) -> List:
 
 
 def total_distance(distance_matrix: np.ndarray) -> float:
-    """
-    Computes the total distance measure of all pairs of samples in a set.
+    """Compute the total distance measure of all pairs of samples in a set.
+
     The equation corresponds to Equation (10) in [2].
+
     Parameters
     ----------
     distance_matrix : ndarray
         diagonal matrix of distances for sample pairs.
+
     Returns
     -------
     total_distance: float
         total distance measure of all pairs of samples in a set.
+
     """
     # The `*0.5` is implemented by only considering the lower triangular.
-    total_distance = np.sqrt(sum(sum(np.tril(distance_matrix ** 2))))
+    total_distance = np.sqrt(sum(sum(np.tril(distance_matrix ** 2))))  # type:ignore
 
     return total_distance
 
 
-def select_trajectories(pair_dist_matrix: np.ndarray, n_traj: int) -> Tuple[List, np.ndarray]:
-    """
-    Computes `total distance` for each `n_traj` combinations of a set of samples.
+def select_trajectories(
+    pair_dist_matrix: np.ndarray, n_traj: int
+) -> Tuple[List, np.ndarray]:
+    """Compute `total distance` for each `n_traj` combinations of a set of samples.
+
     Parameters
     ----------
-    pair_dist_matrix : ndarray
+    pair_dist_matrix
         `distance_matrix` for a sample set.
-    n_traj : int
+    n_traj
         Number of sample combinations for which the `total_distance` is computed.
+
     Returns
     -------
     max_dist_indices : list of ints
@@ -148,6 +170,7 @@ def select_trajectories(pair_dist_matrix: np.ndarray, n_traj: int) -> Tuple[List
         Matrix with n_traj + 1 rows. The first n_traj cols are filled with indices
         of samples and the last column is the `total_distance` of the combinations
         of samples marked by indices in the same row and the columns before.
+
     Raises
     ------
     AssertionError
@@ -155,6 +178,7 @@ def select_trajectories(pair_dist_matrix: np.ndarray, n_traj: int) -> Tuple[List
     AssertionError
         If the number of combinations does not correspong to the combinations
         indicated by the size of `pair_dist_matrix`.
+
     Notes
     -----
     This function can be very slow because it computes distances
@@ -166,6 +190,7 @@ def select_trajectories(pair_dist_matrix: np.ndarray, n_traj: int) -> Tuple[List
     can yield different results that are, however, close in the total
     distance. The total distances tend to differentiate clearly.
     Therefore, the optimal combination is precisely determined.
+
     """
     assert np.all(np.abs(pair_dist_matrix - pair_dist_matrix.T) < 1e-8)
     # Get all possible combinations of input parameters by their indices.
@@ -199,13 +224,14 @@ def select_trajectories(pair_dist_matrix: np.ndarray, n_traj: int) -> Tuple[List
 
 
 def select_trajectories_wrapper_iteration(
-    pair_dist_matrix: np.ndarray, n_traj:int
-    ) -> Tuple[List, np.ndarray]:
-    """
-    Selects the set of samples minus one sample.
+    pair_dist_matrix: np.ndarray, n_traj: int
+) -> Tuple[List, np.ndarray]:
+    """Select the set of samples minus one sample.
+
     Used for selecting iteratively rather than by brute force.
     Implements the main step of the essential of the two "improvements"
     from [2] to [1].
+
     Parameters
     ----------
     pair_dist_matrix : ndarray
@@ -213,6 +239,7 @@ def select_trajectories_wrapper_iteration(
     n_traj : int
         number of samples to choose from a set of samples based on their
         `total_distance`.
+
     Returns
     -------
     tracker_keep_indices : list
@@ -221,9 +248,11 @@ def select_trajectories_wrapper_iteration(
         Matrix with n_traj + 1 rows. The first n_traj cols are filled with indices
         of samples and the last column is the `total_distance` of the combinations
         of samples marked by indices in the same row and the columns before.
+
     See Also
     --------
     select_trajectories
+
     Notes
     -----
     Oftentimes this function leads to diffent combinations than
@@ -237,6 +266,7 @@ def select_trajectories_wrapper_iteration(
     `select_trajectories` because it only contains the combination indices from
     the last iteration if n_traj is smaller than the sample set minus 1.
     The trick using `tracker_keep_indices` is an elegant solution.
+
     """
     n_traj_sample = np.size(pair_dist_matrix, 0)
     tracker_keep_indices = np.arange(0, np.size(pair_dist_matrix, 0))
@@ -261,21 +291,25 @@ def select_trajectories_wrapper_iteration(
     return tracker_keep_indices, combi_total_distance
 
 
-def campolongo_2007(sample_traj_list: List, n_traj: int) -> Tuple[List, np.ndarray, List]:
-    """
-    Implements the post-selected sample set in [1].
+def campolongo_2007(
+    sample_traj_list: List, n_traj: int
+) -> Tuple[List, np.ndarray, List]:
+    """Implement the post-selected sample set in [1].
+
     Takes a list of Morris trajectories and selects the `n_traj` trajectories
     with the largest distance between them.
     Returns the selection as array with n_inputs at the verical and n_traj at the
     horizontal axis and as a list.
     It also returns the diagonal matrix that contains the pair distance
     between each trajectory pair.
+
     Parameters
     ----------
     sample_traj_list : list of ndarrays
         Set of samples.
     n_traj : int
         Number of samples to choose from `sample_traj_list`.
+
     Returns
     -------
     sample_traj_list : list of ndarrays
@@ -284,6 +318,7 @@ def campolongo_2007(sample_traj_list: List, n_traj: int) -> Tuple[List, np.ndarr
         Symmetric `distance_matrix` of selection.
     select_indices : list
         Indices of selected samples.
+
     """
     pair_matrix = distance_matrix(sample_traj_list)
     select_indices, combi_total_distance = select_trajectories(pair_matrix, n_traj)
@@ -297,16 +332,18 @@ def campolongo_2007(sample_traj_list: List, n_traj: int) -> Tuple[List, np.ndarr
 
 def intermediate_ge_menendez_2014(
     sample_traj_list: List, n_traj: int
-    ) -> Tuple[List, np.ndarray, List]:
-    """
-    Implements the essential of the two "improvements" in[2] vis-a-vis [1].
+) -> Tuple[List, np.ndarray, List]:
+    """Implement the essential of the two "improvements" in[2] vis-a-vis [1].
+
     This is basically a wrapper around `select_trajectories_wrapper_iteration`.
+
     Parameters
     ----------
     sample_traj_list : list of ndarrays
         Set of samples.
     n_traj : int
         Number of samples to choose from `sample_traj_list`.
+
     Returns
     -------
     sample_traj_list : list of ndarrays
@@ -315,20 +352,21 @@ def intermediate_ge_menendez_2014(
         Symmetric `distance_matrix` of selection.
     select_indices : list
         Indices of selected samples.
+
     See Also
     --------
     select_trajectories_wrapper_iteration
+
     Notes
     -----
     Oftentimes this function leads to diffent combinations than
     `select_trajectories`. However, their total distance is very close
     to the optimal solution.
+
     """
     pair_matrix = distance_matrix(sample_traj_list)
     # This function is the difference to Campolongo.
-    select_indices, _ = select_trajectories_wrapper_iteration(
-        pair_matrix, n_traj
-    )
+    select_indices, _ = select_trajectories_wrapper_iteration(pair_matrix, n_traj)
 
     select_trajs = [sample_traj_list[idx] for idx in select_indices]
 
@@ -337,30 +375,35 @@ def intermediate_ge_menendez_2014(
     return select_trajs, select_dist_matrix, select_indices
 
 
-def next_combi_total_distance_gm14(combi_total_distance, pair_dist_matrix, lost_index):
-    """
-    Selects the set of samples minus one sample.
+def next_combi_total_distance_gm14(
+    combi_total_distance: np.ndarray, pair_dist_matrix: np.ndarray, lost_index: int
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Select the set of samples minus one sample.
+
     Based on the algorithmic computation of the `total_distance` proposed by [2].
-    I.e. by re-using and adjusting the first `combi_total_distance` matrix each iteration.
-    Used for selecting iteratively rather than by brute force.
+    I.e. by re-using and adjusting the first `combi_total_distance` matrix each
+    iteration. Used for selecting iteratively rather than by brute force.
+
     Parameters
     ----------
-    combi_total_distance_next : ndarray
+    combi_total_distance_next
         Matrix with n_traj + 1 rows. The first n_traj cols are filled with indices
         of samples and the last column is the `total_distance` of the combinations
         of samples marked by indices in the same row and the columns before.
-    pair_dist_matrix : ndarray
+    pair_dist_matrix
         Distance matrix of all combinations and their total_distance.
-    lost_index : int
+    lost_index
         index of the sample that will be dropped from the samples in the above objects.
+
     Returns
     -------
-    combi_total_distance_next : ndarray
+    combi_total_distance_next
         `combi_total_distance` without the dropped sample.
-    pair_dist_matrix_next : ndarray
+    pair_dist_matrix_next
         `pair_dist_matrix` without the dropped sample.
-    lost_index : ndarray
+    lost_index
         `lost_index` without the dropped sample one iteration before.
+
     Notes
     -----
     The function computes the total distance of each trajectory
@@ -371,6 +414,7 @@ def next_combi_total_distance_gm14(combi_total_distance, pair_dist_matrix, lost_
     `select_trajectories_wrapper_iteration` because it uses more for loops to get
     the pair distances from the right combinations that must be subtracted from the
     total distances.
+
     """
     old_combi_total_distance = combi_total_distance
     old_pair_dist_matrix = pair_dist_matrix
@@ -464,26 +508,32 @@ def next_combi_total_distance_gm14(combi_total_distance, pair_dist_matrix, lost_
     return combi_total_distance_next, pair_dist_matrix_next, lost_index_next
 
 
-def final_ge_menendez_2014(sample_traj_list, n_traj):
+def final_ge_menendez_2014(
+    sample_traj_list: List[np.ndarray], n_traj: int
+) -> Tuple[List[np.ndarray], np.ndarray, List[int]]:
     """
-    Implements both "improvements" in [2] vis-a-vis [1].
+    Implement both "improvements" in [2] vis-a-vis [1].
+
     Parameters
     ----------
-    sample_traj_list : list of ndarrays
+    sample_traj_list
         Set of samples.
-    n_traj : int
+    n_traj
         Number of samples to choose from `sample_traj_list`.
+
     Returns
     -------
-    sample_traj_list : list of ndarrays
+    sample_traj_list
         Set of trajectories.
-    select_dist_matrix : ndarray
+    select_dist_matrix
         Symmetric `distance_matrix` of selection.
-    select_indices : list
+    select_indices
         Indices of selected samples.
+
     See Also
     --------
     next_combi_total_distance_gm14
+
     Notes
     -----
     This function, is in fact much slower than `intermediate_ge_menendez_2014`
@@ -495,6 +545,7 @@ def final_ge_menendez_2014(sample_traj_list, n_traj):
     of each trajectory combination by using the total distance of each combination
     in the previous step and subtracting each pair distance with the dropped trajectory,
     that yielded the lowest total distance combinations in the previous step.
+
     """
     n_traj_sample = len(sample_traj_list)
     # Step 1: Compute pair distance and total distances for the trajectory
@@ -540,41 +591,45 @@ def final_ge_menendez_2014(sample_traj_list, n_traj):
     return select_trajs, select_dist_matrix, select_indices
 
 
-def select_sample_set_normal(samp_list, n_select, numeric_zero):
-    """
-    Post-select set of samples based on [0,1] and transform it to stnormal space.
+def select_sample_set_normal(
+    samp_list: List[np.ndarray], n_select: int, numeric_zero: float
+) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+    """Post-select set of samples based on [0,1] and transform it to stnormal space.
+
     Parameters
     ----------
-    samp_list : list of ndarrays
+    samp_list
         Sub-samples.
-    n_select : int
+    n_select
         Number of sub-samples to select from `samp_list`.
-    numeric_zero : float
+    numeric_zero
         `if normal is True`: Prevents `scipy.normal.ppt` to return `-Inf`
         and `Inf` for 0 and 1.
+
     Returns
     -------
-    samp_list : list of ndarrays
-    steps_list : list of ndarrays
+    samp_list
+    steps_list
+
     Notes
     -----
-    Function for post-selection is `intermediate_ge_menendez_2014` because it is the fastest.
+    Function for post-selection is `intermediate_ge_menendez_2014` because it is the
+    fastest.
+
     See Also
     --------
     intermediate_ge_menendez_2014
-    """
-    n_sample = len(samp_list)
 
+    """
     # Post- select `samp_list`.
     samp_list, _, _ = intermediate_ge_menendez_2014(samp_list, n_select)
 
     steps_list = []
 
-    for i in range(0, n_select):        
+    for i in range(0, n_select):
         samp_list[i] = np.apply_along_axis(
-                transform_uniform_stnormal_uncorr, 1, samp_list[i], numeric_zero
-            )
+            transform_uniform_stnormal_uncorr, 1, samp_list[i], numeric_zero
+        )
         steps_list.append(samp_list[i][-1, :] - samp_list[i][0, :])
 
     return samp_list, steps_list
-

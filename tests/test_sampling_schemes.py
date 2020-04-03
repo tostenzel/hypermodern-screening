@@ -1,21 +1,27 @@
-import numpy as np
+"""Tests for module `sampling_schemes.py`."""
 
+import numpy as np
 from numpy.testing import assert_array_equal
 
 
-from hypermodern_screening.sampling_schemes import morris_trajectory
-from hypermodern_screening.sampling_schemes import radial_sample
+from hypermodern_screening.sampling_schemes import morris_trajectory, radial_sample
 
 
 def test_morris_trajectory_value_grid() -> None:
     """
     Tests wether the point grid is composed of the rights values.
+
     Notes
     -----
     `morris_trajectory` is hard to test because there are many random
     objects involved. A good check is to have a look at a large number
     of trajectories as the conditions that they should meet are easy
     to recognize.
+
+    See Also
+    --------
+    `morris_trajectory`.
+
     """
     n_levels = 10
     # Many inputs for high probability to catch all grid points in trajectory.
@@ -35,8 +41,15 @@ def test_morris_trajectory_value_grid() -> None:
 
 def test_radial_sample() -> None:
     """
+    Test pattern in radial samples.
+
     Tests wether for each row i (non-pythonic), only the ith elements is
     different from the first row for a sample of radial subsamples.
+
+    See Also
+    --------
+    `radial_sample.
+
     """
     n_rads = 10
     n_params = 5
@@ -49,4 +62,3 @@ def test_radial_sample() -> None:
                 np.delete(rad_list[rad][row + 1, :], row),
                 np.delete(rad_list[rad][0, :], row),
             )
-

@@ -1,7 +1,6 @@
-"""
-Functions for the inverse Rosenblatt / inverse Nataf transformation
-from uniform to normal distribution.
-"""
+"""Functions for the inverse Rosenblatt / inverse Nataf transformation (u to z_c)."""
+
+from typing import Tuple
 
 import numpy as np
 import scipy.linalg as linalg
@@ -9,15 +8,18 @@ from scipy.stats import norm
 
 
 def covariance_to_correlation(cov: np.ndarray) -> np.ndarray:
-    """Converts covariance matrix to correlation matrix.
+    """Convert covariance matrix to correlation matrix.
+
     Parameters
     ----------
-    cov : ndarray
+    cov
         Covariance matrix.
+
     Returns
     -------
-    corr : ndarray
+    corr
         Correlation matrix.
+
     """
     # Standard deviations of each variable.
     sd = np.sqrt(np.diag(cov)).reshape(1, len(cov))
@@ -28,25 +30,30 @@ def covariance_to_correlation(cov: np.ndarray) -> np.ndarray:
 
 
 def transform_uniform_stnormal_uncorr(
-    uniform_deviates: np.ndarray, numeric_zero: float=0.005
-    ) -> np.ndarray:
-    """
+    uniform_deviates: np.ndarray, numeric_zero: float = 0.005
+) -> np.ndarray:
+    """Transorm u to z_u.
+
     Converts sample from uniform distribution to standard normal space
     without regarding correlations.
+
     Parameters
     ----------
-    uniform_deviates : ndarray
+    uniform_deviates
         Draws from Uniform[0,1].
-    numeric_zero : float
+    numeric_zero
         Used to substitute zeros and ones before applying `scipy.stats.norm`
         to not obtain `-Inf` and `Inf`.
+
     Returns
     -------
-    stnormal_deviates : ndarray
+    stnormal_deviates
         `uniform deviates` converted to standard normal space without correlations.
+
     See Also
     --------
     morris_trajectory
+
     Notes
     -----
     This transformation is already applied as option in `morris_trajectory`.
@@ -57,9 +64,10 @@ def transform_uniform_stnormal_uncorr(
     the function derivation.
     The parameter `numeric_zero` can be highly influential. I prefer it to be
     relatively large to put more proportional, i.e. less weight on the extremes.
-    """
 
-    # Need to replace ones, because norm.ppf(1) = Inf and zeros because norm.ppf(0) = -Inf
+    """
+    # Need to replace ones, because norm.ppf(1) = Inf and zeros because
+    # norm.ppf(0) = -Inf
     approx_uniform_devs = np.where(
         uniform_deviates == 1, 1 - numeric_zero, uniform_deviates
     )
@@ -73,27 +81,34 @@ def transform_uniform_stnormal_uncorr(
     return stnormal_deviates
 
 
-def transform_stnormal_normal_corr(z_row, cov, mu):
-    """
+def transform_stnormal_normal_corr(
+    z_row: np.ndarray, cov: np.ndarray, mu: np.ndarray
+) -> Tuple[np.ndarray, float]:
+    """Transform u to z_c.
+
     Transformation from standard normal to multivariate normal space with given
     correlations following [1], page 77-102.
+
     Step 1) Compute correlation matrix.
     Step 2) Introduce dependencies to standard normal sample.
     Step 3) De-standardize sample to normal space.
+
     Parameters
     ----------
-    z_row : ndarray
+    z_row
         Row of uncorrelated standard normal deviates.
-    cov : ndarray
+    cov
         Covariance matrix of correlated normal deviates.
-    mu : ndarray
+    mu
         Expectation values of correlated normal deviates
+
     Returns
     -------
-    x_norm_row : ndarray
+    x_norm_row
         Row of correlated normal deviates.
-    correlate_step : float
+    correlate_step
         Lower right corner element of the lower Cholesky matrix.
+
     Notes
     -----
     Importantly, the step in the numerator of the uncorrelated Elementary Effect
@@ -105,18 +120,19 @@ def transform_stnormal_normal_corr(z_row, cov, mu):
     expectation.
     This method is simpler and slightly more precise than the one in [3], page 33, for
     normally distributed paramters.
-    [1] explains how Rosenblatt and Nataf transformation are equal for normally distributed
-    deviates.
+    [1] explains how Rosenblatt and Nataf transformation are equal for normally
+    distributed deviates.
+
     References
     ----------
     [1] Lemaire, M. (2013). Structural reliability. John Wiley & Sons.
     [2] Gentle, J. E. (2006). Random number generation and Monte Carlo methods. Springer
     Science & Business Media.
-    [3] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global sensitivity
-    analysis of models with dependent inputs. Reliability Engineering & System
-    Safety 100 (162), 28–39.
-    """
+    [3] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
+    sensitivity analysis of models with dependent inputs. Reliability Engineering &
+    System Safety 100 (162), 28–39.
 
+    """
     # Convert covariance matrix to correlation matrix
     corr = covariance_to_correlation(cov)
 
@@ -136,4 +152,3 @@ def transform_stnormal_normal_corr(z_row, cov, mu):
     x_norm_row = x_norm.T
 
     return x_norm_row, correlate_step
-

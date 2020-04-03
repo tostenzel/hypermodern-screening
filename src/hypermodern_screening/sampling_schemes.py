@@ -1,26 +1,34 @@
-from typing import Callable, List, Tuple
+"""Sampling parameter vectors tailored to EE computations."""
+
 import random
+from typing import Callable, List, Tuple
 
 import chaospy as cp
 import numpy as np
-from hypermodern_screening.transform_distributions import transform_uniform_stnormal_uncorr
+
+from hypermodern_screening.transform_distributions import (
+    transform_uniform_stnormal_uncorr,
+)
 
 
 def stepsize(n_levels: int) -> float:
-    """
-    Computes stepsize to create equiprobable sample points for the trajectory design.
+    """Compute stepsize to create equiprobable sample points for the traj. design.
+
     Parameters
     ----------
-    n_levels : int
+    n_levels
         Number of points in a trajectory sample.
+
     Returns
     -------
-    step : float
+    step
         Step added to each lower half point of the point grid.
+
     Raises
     ------
     AssertionError
         If the number of levels is not an even integer.
+
     Notes
     -----
     This function, published in [1], assumes that the number of sample points called
@@ -29,10 +37,11 @@ def stepsize(n_levels: int) -> float:
     formula, the step added to the lowest, second lowest, ..., highest point in the
     lower half creates the lowest, second lowest, ..., highest point in the upper half
     of the point grid.
+
     References
     ----------
-    [1] Morris, M. D. (1991). Factorial sampling plans for preliminary computational experiments.
-    Technometrics 33 (2), 161–174.
+    [1] Morris, M. D. (1991). Factorial sampling plans for preliminary computational
+    experiments. Technometrics 33 (2), 161–174.
     """
     assert float(
         n_levels / 2
@@ -46,47 +55,51 @@ def stepsize(n_levels: int) -> float:
 def morris_trajectory(
     n_inputs: int,
     n_levels: int,
-    seed: int=123,
-    normal: bool=False,
-    numeric_zero: float=0.01,
-    step_function: Callable=stepsize,
-    stairs: bool=True,
+    seed: int = 123,
+    normal: bool = False,
+    numeric_zero: float = 0.01,
+    step_function: Callable = stepsize,
+    stairs: bool = True,
 ) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    Creates random sample in trajectory design.
+    """Create random sample in trajectory design.
+
     This function creates a random sample for a number of function parameters
     (columns). The sample itself consists of the number plus one vectors of
     parameter draws (rows).
     It also computes the steps taken by each element.
+
     Parameters
     ----------
-    n_inputs : int
+    n_inputs
         Number of input paramters / columns / rows - 1.
-    n_levels : int
+    n_levels
         Number of distict grid points.
-    seed : int
+    seed
         Random seed.
-    normal : bool
+    normal
         Indicates whether to transform points by `scipy.normal.ppt`
-    numeric_zero : float
+    numeric_zero
         `if normal is True`: Prevents `scipy.normal.ppt` to return `-Inf`
         and `Inf` for 0 and 1.
-    step_function : function
+    step_function
         Constant step as function of `n_levels` added to lower half of point grid.
-    stairs : bool
+    stairs
         if False: Randomly shuffle columns, dissolves stairs shape.
+
     Returns
     -------
-    B_random : ndarray
+    B_random
         Random sample in trajectory design.
         Dimension `n_inputs` x `n_inputs + 1`.
-    trans_steps : ndarray
+    trans_steps
         Column vector of steps added to base value point. Sorted by
         parameter/column. Dimension `n_inputs` x `1`.
+
     See Also
     --------
     stepsize : See parameter `step_function`.
     transform_uniform_stnormal_uncorr : See parameter `numeric_zero`.
+
     Notes
     -----
     The method is described in [1]. This function follows the notation therein.
@@ -105,12 +118,13 @@ def morris_trajectory(
     on the stepsize and therefore the Elementary Effects.
     To account for transformations, the step is recomputed for each parameter by
     subtracting the last first row from the last row.
+
     References
     ----------
     [1] Morris, M. D. (1991). Factorial sampling plans for preliminary computational
     experiments. Technometrics 33 (2), 161–174.
-    """
 
+    """
     np.random.seed(seed)
 
     step = stepsize(n_levels)
@@ -165,37 +179,39 @@ def trajectory_sample(
     n_traj: int,
     n_inputs: int,
     n_levels: int,
-    seed: int=123,
-    normal: bool=False,
-    numeric_zero: float=0.01,
-    step_function: Callable=stepsize,
-    stairs: bool=True,
-) -> Tuple[list, list]:
-    """
-    Loops over `morris_sample`.
+    seed: int = 123,
+    normal: bool = False,
+    numeric_zero: float = 0.01,
+    step_function: Callable = stepsize,
+    stairs: bool = True,
+) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+    """Loops over `morris_sample`.
+
     Parameters
     ----------
-    n_inputs : int
+    n_inputs
         Number if input paramters.
-    n_levels : int
+    n_levels
         Number of distict grid points.
-    seed : int
+    seed
         Random seed.
-    normal : bool
+    normal
         Indicates whether to transform points by `scipy.normal.ppt`
-    numeric_zero : float
+    numeric_zero
         `if normal is True`: Prevents `scipy.normal.ppt` to return `-Inf`
         and `Inf` for 0 and 1.
-    step_function : function
+    step_function
         Constant step as function of `n_levels` added to lower half of point grid.
-    stairs : bool
+    stairs
         if False: Randomly shuffle columns, dissolves stairs shape.
+
     Returns
     -------
-    sample_traj_list : list of np.ndarrays
+    sample_traj_list
         Set of trajectories.
-    steps_list : list of np.ndarrays
+    steps_list
         Set of steps taken by each base row.
+
     """
     sample_traj_list = []
     steps_list = []
@@ -214,35 +230,38 @@ def trajectory_sample(
 
 
 def radial_sample(
-    n_rad: int, n_inputs: int, normal: bool=False, sequence: str="S"
-    ) -> Tuple[list, list]:
-    """
-    Generates sample in radial design as described in [1].
+    n_rad: int, n_inputs: int, normal: bool = False, sequence: str = "S"
+) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+    """Generate sample in radial design as described in [1].
+
     For each subsample, there are `n_inputs + 1` rows and `n_inputs` colums.
     Each row is identical except of the diagonal of the sample w/o the first row.
+
     Parameters
     ----------
-    n_rad : int
+    n_rad
         Number of subsamples.
-    n_inputs : int
+    n_inputs
         Number of input paramters / columns / rows - 1.
-    seed : int
+    seed
         Random seed.
-    normal : bool
+    normal
         Indicates whether to transform points by `scipy.normal.ppt`
-    numeric_zero : float
+    numeric_zero
         `if normal is True`: Prevents `scipy.normal.ppt` to return `-Inf`
         and `Inf` for 0 and 1.
-    sequence : string
+    sequence
         Type of quasi-random sequence.
+
     Returns
     -------
-    sample : list of np.ndarrays
+    sample
         Random sample in radial design.
         Dimension `n_inputs` x `n_inputs + 1`.
-    trans_steps : list of np.ndarrays
+    trans_steps
         Column vector of steps added to base value point. Sorted by
         parameter/column. Dimension `n_inputs` x `1`.
+
     Notes
     -----
     See [2] for abbreviations of the different sequence types.
@@ -250,14 +269,16 @@ def radial_sample(
     by design and only one element changes in each row compared to the first row.
     All distict elements in the whole sample are drawn at once because the
     default Sobol' sequence can not be reseeded.
+
     References
     ----------
     [1] Ge, Q. and M. Menendez (2017). Extending morris method for qualitative global
     sensitivityanalysis of models with dependent inputs. Reliability Engineering &
     System Safety 100 (162), 28–39.
-    [1] https://github.com/jonathf/chaospy/blob/master/chaospy/distributions/sampler/generator.py#L62
-    """
+    [2] <https://github.com/jonathf/chaospy/blob/master/chaospy/distributions/sampler/
+    generator.py#L62>
 
+    """
     # Draw all elements at once.
     all_elements = cp.generate_samples(order=n_rad * 2 * n_inputs, rule=sequence)
     all_elements = all_elements.reshape(n_rad, 2 * n_inputs)
@@ -290,4 +311,3 @@ def radial_sample(
         steps_list.append(steps_temp)
 
     return rad_list, steps_list
-

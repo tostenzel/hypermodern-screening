@@ -1,16 +1,19 @@
+"""Tests for module `transform_reorder.py`."""
+
 import numpy as np
+from numpy.testing import assert_array_equal
 import pytest
 
-from numpy.testing import assert_array_equal
-
-from hypermodern_screening.transform_reorder import ee_corr_reorder_sample
-from hypermodern_screening.transform_reorder import reverse_ee_corr_reorder_sample
-from hypermodern_screening.transform_reorder import ee_uncorr_reorder_sample
-from hypermodern_screening.transform_reorder import reverse_ee_uncorr_reorder_sample
-from hypermodern_screening.transform_reorder import reorder_mu
-from hypermodern_screening.transform_reorder import reorder_cov
-from hypermodern_screening.transform_reorder import reverse_reorder_mu
-from hypermodern_screening.transform_reorder import reverse_reorder_cov
+from hypermodern_screening.transform_reorder import (
+    ee_corr_reorder_sample,
+    ee_uncorr_reorder_sample,
+    reorder_cov,
+    reorder_mu,
+    reverse_ee_corr_reorder_sample,
+    reverse_ee_uncorr_reorder_sample,
+    reverse_reorder_cov,
+    reverse_reorder_mu,
+)
 
 
 @pytest.fixture
@@ -21,9 +24,12 @@ def traj() -> np.ndarray:
 
 
 def test_ee_uncorr_reorder_sample(traj: np.ndarray) -> None:
-    """
-    Unit tests for `ee_uncorr_reorder_sample` and
-    `reverse_ee_uncorr_reorder_sample`.
+    """Test the position juggling for the uncorrelated Elementary Effects.
+
+    See Also
+    --------
+    `ee_uncorr_reorder_sample` and `reverse_ee_uncorr_reorder_sample`.
+
     """
     assert_array_equal(
         ee_uncorr_reorder_sample(traj),
@@ -48,9 +54,12 @@ def test_ee_uncorr_reorder_sample(traj: np.ndarray) -> None:
 
 
 def test_ee_corr_reorder_sample(traj: np.ndarray) -> None:
-    """
-    Unit tests for `ee_corr_reorder_sample` and
-    `reverse_ee_corr_reorder_sample`.
+    """Test the position juggling for the correlated Elementary Effects.
+
+    See Also
+    --------
+    `ee_corr_reorder_sample` and `reverse_ee_corr_reorder_sample`.
+
     """
     assert_array_equal(
         ee_corr_reorder_sample(traj),
@@ -119,4 +128,3 @@ def test_reorder_cov(cov: np.ndarray) -> None:
     assert_array_equal(expected, reverse_reorder_cov(cov))
 
     assert_array_equal(cov, reverse_reorder_cov(reorder_cov(cov)))
-
