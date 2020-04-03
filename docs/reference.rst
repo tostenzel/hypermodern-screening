@@ -57,4 +57,3 @@ hypermodern_python.screening_measures
 
 .. automodule:: hypermodern_screening.screening_measures
    :members:
-

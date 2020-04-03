@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hypermodern-screening"
-version = "0.0.2"
+version = "0.0.3"
 description = "The hypermodern screening project"
 authors = ["tostenzel <tobias.stenzel@mailbox.org>"]
 license = "MIT"
@@ -51,4 +51,3 @@ fail_under = 80
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
-
