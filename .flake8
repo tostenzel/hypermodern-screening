@@ -14,6 +14,7 @@ ignore = E203, E501, W503, DAR000, S605, S607
 # S605 Starting a process with a shell:
 # S607 Starting a process with a partial executable path
 
+
 # Reduce back to 10 afer adjusting `screening_measures`.
 max-complexity = 11
 
