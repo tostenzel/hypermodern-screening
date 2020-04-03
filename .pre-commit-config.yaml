@@ -17,3 +17,8 @@ repos:
         entry: poetry run flake8
         language: system
         types: [python]
+    -   id: restructuredtext-lint
+        entry: rst-lint
+        language: system
+        files: '(README.rst)'
+        name: restructuredtext-lint - Is the README PyPi-compliant?
