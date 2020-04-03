@@ -29,11 +29,11 @@ Read the documentation `here <https://hypermodern-screening.readthedocs.io>`_ an
 References
 ~~~~~~~~~~
 
-    Stenzel, T (2020): `Uncertainty Quantification for an Eckstein-Keane-Wolpin model with
+    Stenzel, T. (2020): `Uncertainty Quantification for an Eckstein-Keane-Wolpin model with
     correlated input parameters <https://github.com/tostenzel/thesis-projects-tostenzel/blob/master/latex/main.pdf>`_.
     *Master's thesis, University of Bonn*.
 
-    Ge, Q. and M. Menendez (2017). `Extending morris method for qualitative global sensitivity
+    Ge, Q. and Menendez, M. (2017). `Extending Morris method for qualitative global sensitivity
     analysis of models with dependent inputs <https://doi.org/10.1016/j.ress.2017.01.010>`_. *Reliability Engineering & System Safety 100(162)*,
     28-39.
 
@@ -42,3 +42,7 @@ References
 -----
 
 *: Claudio, in turn, was inspired by the chess book "Die hypermoderne Schachpartie" (1925) by Savielly Tartakower.
+
+-----
+
+The image is a detail from the photogravure *Paris by night* by Albert Robida, 1883 (via `Old Book Illustration <https://www.oldbookillustrations.com/illustrations/paris-night>`_.
