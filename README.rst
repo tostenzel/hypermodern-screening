@@ -1,6 +1,6 @@
 
 
-.. image:: https://github.com/tostenzel/hypermodern-screening/workflows/Continuous%20Integration/badge.svg
+.. image:: https://github.com/tostenzel/hypermodern-screening/workflows/Continuous%20Integration/badge.svg?branch=master
   :target: https://github.com/tostenzel/hypermodern-screening/actions
 
 .. image:: https://codecov.io/gh/tostenzel/hypermodern-screening/branch/master/graph/badge.svg
