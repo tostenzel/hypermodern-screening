@@ -21,7 +21,7 @@ Read the documentation `here <https://hypermodern-screening.readthedocs.io>`_ an
     $ pip install hypermodern_screening
 
 
-.. image:: albert_robida_1883.jpg
+.. image:: docs/.static/albert_robida_1883.jpg
    :width: 40pt
 **
 
