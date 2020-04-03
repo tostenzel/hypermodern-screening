@@ -24,7 +24,7 @@ Read the documentation `here <https://hypermodern-screening.readthedocs.io>`_ an
 
 .. image:: albert_robida_1883.jpg
    :width: 40pt
-
+**
 
 References
 ~~~~~~~~~~
@@ -43,6 +43,4 @@ References
 
 *: Claudio, in turn, was inspired by the chess book "Die hypermoderne Schachpartie" (1925) by Savielly Tartakower.
 
------
-
-The image is a detail from the photogravure *Paris by night* by Albert Robida, 1883 (via `Old Book Illustration <https://www.oldbookillustrations.com/illustrations/paris-night>`_.
+**: The image is a detail from the photogravure *Paris by night* by Albert Robida, 1883 (via `Old Book Illustrations <https://www.oldbookillustrations.com/illustrations/paris-night>`_).
