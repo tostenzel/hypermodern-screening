@@ -7,7 +7,11 @@ license = "MIT"
 readme = "README.rst"
 homepage = "https://github.com/tostenzel/hypermodern-screening"
 repository = "https://github.com/tostenzel/hypermodern-screening"
-keywords = ["hypermodern", "screening"]
+keywords = ["hypermodern",
+    "screening",
+    "uncertainty-quantification", "global-sensitivity-analysis",
+    "screening",
+    "sampling-methods"]
 documentation = "https://hypermodern-screening.readthedocs.io"
 
 [tool.poetry.dependencies]
