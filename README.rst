@@ -1,4 +1,4 @@
-.. image:: https://img.shields.io/pypi/v/hypermodern-screening.svg
+.. image:: https://badge.fury.io/py/hypermodern-screening.svg
   :target: https://pypi.org/project/hypermodern-screening
 
 .. image:: https://github.com/tostenzel/hypermodern-screening/workflows/Continuous%20Integration/badge.svg?branch=master
