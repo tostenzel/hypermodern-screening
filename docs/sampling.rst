@@ -4,10 +4,10 @@ Sampling Schemes
 Click at the following `nbviewer` or `mybinder` badges to view the tutorial notebook that accompanies this section.
 
 .. image:: https://camo.githubusercontent.com/bfeb5472ee3df9b7c63ea3b260dc0c679be90b97/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f72656e6465722d6e627669657765722d6f72616e67652e7376673f636f6c6f72423d66333736323626636f6c6f72413d346434643464
- :target: https://nbviewer.jupyter.org/github/tostenzel/hypermodern-screening/blob/documentation/docs/notebooks/sampling.ipynb
+ :target: https://nbviewer.jupyter.org/github/tostenzel/hypermodern-screening/blob/master/docs/notebooks/sampling.ipynb
 
 .. image:: https://mybinder.org/badge_logo.svg
- :target: https://mybinder.org/v2/gh/tostenzel/hypermodern-screening/documentation?filepath=docs%2Fnotebooks%2Fsampling.ipynb
+ :target: https://mybinder.org/v2/gh/tostenzel/hypermodern-screening/master?filepath=docs%2Fnotebooks%2Fsampling.ipynb
 
 
 The two presented sampling schemes are the trajectory and the radial design. Although the schemes are tailored to the computation of EEs, positional differences between them cause differences in their post-processing.

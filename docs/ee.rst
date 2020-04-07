@@ -4,10 +4,10 @@ Elementary Effects
 Click at the following `nbviewer` or `mybinder` badges to view the tutorial notebook that accompanies this section.
 
 .. image:: https://camo.githubusercontent.com/bfeb5472ee3df9b7c63ea3b260dc0c679be90b97/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f72656e6465722d6e627669657765722d6f72616e67652e7376673f636f6c6f72423d66333736323626636f6c6f72413d346434643464
- :target: https://nbviewer.jupyter.org/github/tostenzel/hypermodern-screening/blob/documentation/docs/notebooks/elementary_effects.ipynb
+ :target: https://nbviewer.jupyter.org/github/tostenzel/hypermodern-screening/blob/master/docs/notebooks/elementary_effects.ipynb
 
 .. image:: https://mybinder.org/badge_logo.svg
- :target: https://mybinder.org/v2/gh/tostenzel/hypermodern-screening/documentation?filepath=docs%2Fnotebooks%2Felementary_effects.ipynb
+ :target: https://mybinder.org/v2/gh/tostenzel/hypermodern-screening/master?filepath=docs%2Fnotebooks%2Felementary_effects.ipynb
 
 This section describes the approach to extend the EE-based measures to input parameters that are correlated. It largely follows [Ge.2017]_. Their main achievement is to outline a transformation of samples in radial and trajectory design that incorporates the correlation between the input parameters. This implies, that the trajectory and radial samples cannot be written as before. The reason is that the correlations of parameter :math:`X_i`, to which step :math:`\Delta^i` is added, imply that all other parameters :math:`\pmb{X_{\sim i}}` in the same row with non-zero correlation with :math:`X_i` are changed as well. Therefore, the rows cannot be denoted and compared as easily by :math:`a`'s and :math:`b`'s as in the last section. Transforming these matrices allows to re-define the EE-based measures accordingly, such that they sustain the main properties of the ordinary measures for uncorrelated parameters. The property is being a function of the mean derivative. The section covers the approach in a simplified form, focussing on normally distributed input parameters. Yet, [Ge.2017]_ do not fully develop these measures. I explain how their measures can lead to arbitrary rankings for correlated input parameters. I first cover the inverse transform sampling method that incorporates correlations between random draws from the parameter distributions. Second, I describe the Elementary Effects that I redesigned based on my analysis of [Ge.2017]_ and the drawbacks therein. Lastly, I comment on these drawbacks in more detail.
 
