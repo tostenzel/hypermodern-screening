@@ -24,10 +24,20 @@ Read the documentation `here <https://hypermodern-screening.readthedocs.io>`_ an
     $ pip install hypermodern_screening
 
 
-.. image:: docs/.static/albert_robida_1883.jpg
+.. image:: docs/images/albert_robida_1883.jpg
    :width: 40pt
 
 `**`
+
+|
+
+-----
+
+`*`: Claudio, in turn, was inspired by the chess book "Die hypermoderne Schachpartie" (1925) by Savielly Tartakower.
+
+`**`: The image is a detail from the photogravure *Paris by night* by Albert Robida, 1883 (via `Old Book Illustrations <https://www.oldbookillustrations.com/illustrations/paris-night>`_).
+
+|
 
 References
 ~~~~~~~~~~
@@ -42,28 +52,21 @@ References
 
 |
 
------
-
-`*`: Claudio, in turn, was inspired by the chess book "Die hypermoderne Schachpartie" (1925) by Savielly Tartakower.
-
-`**`: The image is a detail from the photogravure *Paris by night* by Albert Robida, 1883 (via `Old Book Illustrations <https://www.oldbookillustrations.com/illustrations/paris-night>`_).
-
-
 Quick start
 ~~~~~~~~~~~
 
 .. code-block:: bash
 
     import hypermodern_screening as hms
-    
+
     # Define the model in pseudocode.
     def qoi_model(input_parameters)
         return qoi
-    
+
     # Generate list of input samples in radial design.
     rad_list, step_list = hms.radial_sample(n_sample, n_inputs, normal=True)
-    
-    # Compute uncorrelated and correlated Elementary Effects and statistics thereof.
+
+    # Compute uncorrelated and correlated elementary effects and statistics thereof.
     measures_list, ees_list = hms.screening_measures(
         qoi_model,
         rad_list,
@@ -71,7 +74,7 @@ Quick start
         cov_inputs,
         mu_inputs,
         radial=True
-        )
-    
-    # Compute sigma-normalized statistics of Elementary Effects.
+    )
+
+    # Compute sigma-normalized statistics of elementary effects.
     measures_sigma_norm = hms.compute_measures(ees_list, sd_qoi, sd_inputs, sigma_norm=True)

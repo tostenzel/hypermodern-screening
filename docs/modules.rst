@@ -1,5 +1,5 @@
-Reference
-=========
+Modules
+=======
 
 .. contents::
     :local:

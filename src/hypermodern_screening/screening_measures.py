@@ -207,8 +207,8 @@ def compute_measures(
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Compute aggregate measures based on (individual) Elementary Effects.
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     ee_i
         (individual) Elementary Effects of input paramters (cols).
     sd_x
