@@ -29,16 +29,6 @@ Read the documentation `here <https://hypermodern-screening.readthedocs.io>`_ an
 
 `**`
 
-|
-
------
-
-`*`: Claudio, in turn, was inspired by the chess book "Die hypermoderne Schachpartie" (1925) by Savielly Tartakower.
-
-`**`: The image is a detail from the photogravure *Paris by night* by Albert Robida, 1883 (via `Old Book Illustrations <https://www.oldbookillustrations.com/illustrations/paris-night>`_).
-
-|
-
 References
 ~~~~~~~~~~
 
@@ -49,8 +39,6 @@ References
     Ge, Q. and Menendez, M. (2017). `Extending Morris method for qualitative global sensitivity
     analysis of models with dependent inputs <https://doi.org/10.1016/j.ress.2017.01.010>`_. *Reliability Engineering & System Safety 100(162)*,
     28-39.
-
-|
 
 Quick start
 ~~~~~~~~~~~
@@ -78,3 +66,11 @@ Quick start
 
     # Compute sigma-normalized statistics of elementary effects.
     measures_sigma_norm = hms.compute_measures(ees_list, sd_qoi, sd_inputs, sigma_norm=True)
+
+|
+
+-----
+
+`*`: Claudio, in turn, was inspired by the chess book "Die hypermoderne Schachpartie" (1925) by Savielly Tartakower.
+
+`**`: The image is a detail from the photogravure *Paris by night* by Albert Robida, 1883 (via `Old Book Illustrations <https://www.oldbookillustrations.com/illustrations/paris-night>`_).
