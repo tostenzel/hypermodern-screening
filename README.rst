@@ -32,9 +32,9 @@ Read the documentation `here <https://hypermodern-screening.readthedocs.io>`_ an
 References
 ~~~~~~~~~~
 
-    Stenzel, T. (2020): `Uncertainty Quantification for an Eckstein-Keane-Wolpin model with
-    correlated input parameters <https://github.com/tostenzel/thesis-projects-tostenzel/blob/master/latex/main.pdf>`_.
-    *Master's thesis, University of Bonn*.
+    Stenzel, T. (2020): `Uncertainty Quantification for an Eckstein-Keane-Wolpin Model with
+    Correlated Input Parameters <https://github.com/tostenzel/thesis-projects-tostenzel/blob/master/latex/main.pdf>`_.
+    *Master's Thesis, University of Bonn*.
 
     Ge, Q. and Menendez, M. (2017). `Extending Morris method for qualitative global sensitivity
     analysis of models with dependent inputs <https://doi.org/10.1016/j.ress.2017.01.010>`_. *Reliability Engineering & System Safety 100(162)*,
