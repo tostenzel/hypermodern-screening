@@ -4,11 +4,15 @@
 .. image:: https://github.com/tostenzel/hypermodern-screening/workflows/Continuous%20Integration/badge.svg?branch=master
   :target: https://github.com/tostenzel/hypermodern-screening/actions
 
+.. image:: https://readthedocs.org/projects/hypermodern-screening/badge/?version=latest
+   :target: https://hypermodern-screening.readthedocs.io/en/latest/?badge=latest
+
 .. image:: https://codecov.io/gh/tostenzel/hypermodern-screening/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/tostenzel/hypermodern-screening
 
-.. image:: https://readthedocs.org/projects/hypermodern-screening/badge/?version=latest
-   :target: https://hypermodern-screening.readthedocs.io/en/latest/?badge=latest
+.. image:: https://api.codacy.com/project/badge/Grade/87ad6f0069fd45d9afd5ad97a579329b
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/manual/tostenzel/hypermodern-screening?utm_source=github.com&utm_medium=referral&utm_content=tostenzel/hypermodern-screening&utm_campaign=Badge_Grade_Dashboard
 
 
 |
