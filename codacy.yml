@@ -1,5 +1,4 @@
 ---
-
 exclude_paths:
   - 'scr/hypermodern_screening/__init__.py'
   - 'tests/__init__.py'
